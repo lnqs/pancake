@@ -1,0 +1,35 @@
+AC_PREREQ(2.59)
+AC_INIT([Pancake], [0.0.1])
+AM_INIT_AUTOMAKE([Pancake], [0.0.1])
+AM_CONFIG_HEADER([config.h])
+
+AM_INIT_AUTOMAKE([foreign dist-bzip2])
+
+AC_PROG_CXX
+AC_PROG_LIBTOOL
+
+AC_DEFINE(PACKAGE_BUGREPORT, "simon.schoenfeld@web.de")
+
+CPPFLAGS="$CPPFLAGS -Wall -Werror -std=c99"
+
+### Check for dependencies
+# GTK+-2
+PKG_CHECK_MODULES(gtk, [gtk+-2.0 >= 2.12.0],,
+	AC_MSG_ERROR([gtk+-2.0 >= 2.12.0 not found!]))
+
+# libwnck
+PKG_CHECK_MODULES(libwnck, [libwnck-1.0 >= 2.22.0],,
+	AC_MSG_ERROR([libwnck-1.0 >= 2.20.0 not found!]))
+
+### Write Makefiles
+AC_SUBST(gtk_CFLAGS)
+AC_SUBST(gtk_LIBS)
+AC_SUBST(libwnck_CFLAGS)
+AC_SUBST(libwnck_LIBS)
+
+AC_CONFIG_FILES([ \
+	Makefile \
+	src/Makefile
+])
+
+AC_OUTPUT
