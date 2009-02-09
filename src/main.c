@@ -17,11 +17,14 @@
 
 #include <locale.h>
 #include <gtk/gtk.h>
+#include "misc.h"
 #include "sighandler.h"
 #include "commandline.h"
 #include "modloader.h"
 #include "configparser.h"
 #include "panel.h"
+
+const gchar* pc_program_invocation_name;
 
 static void pc_i18n_init()
 {
@@ -33,6 +36,8 @@ static void pc_i18n_init()
 
 int main(int argc, char** argv)
 {
+	pc_program_invocation_name = argv[0];
+	
 	if(!pc_sighandler_init())
 		return 2;
 	

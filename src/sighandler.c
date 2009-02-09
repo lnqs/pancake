@@ -23,6 +23,7 @@
 #include <string.h>
 #include <signal.h>
 #include <errno.h>
+#include "misc.h"
 
 static gint sigpipe[2];
 static GIOChannel* io_channel;
@@ -48,7 +49,8 @@ static const gint signals_to_catch[] =
 static void pc_sighandler_unix_sighandler(int signum)
 {
 	if(write(sigpipe[1], &signum, sizeof(int)) != sizeof(int))
-		g_print("Failed to write signal %i to signalpipe\n", signum);
+		g_print("%s: Failed to write signal %i to signalpipe\n",
+				pc_program_invocation_name, signum);
 }
 
 static gboolean pc_sighandler_final_sighandler(
@@ -66,12 +68,13 @@ static gboolean pc_sighandler_final_sighandler(
   
 	if(error != NULL)
 	{
-		g_print("failed to read from signalpipe: %s\n", error->message);
+		g_print("%s: failed to read from signalpipe: %s\n",
+				pc_program_invocation_name, error->message);
 		g_error_free(error);
 	}
 
 	if(status == G_IO_STATUS_EOF)
-		g_print("signalpipe closed\n");
+		g_print("%s: signalpipe closed\n", pc_program_invocation_name);
 
 	gtk_main_quit();
 
@@ -83,7 +86,8 @@ static gboolean pc_sighandler_create_sigpipe()
 	/* create pipe */
 	if(pipe(sigpipe))
 	{
-		g_print("FATAL: failed to create signalpipe: %s\n", strerror(errno));
+		g_print("%s: failed to create signalpipe: %s\n",
+				pc_program_invocation_name, strerror(errno));
 		return FALSE;
 	}
 
@@ -91,13 +95,15 @@ static gboolean pc_sighandler_create_sigpipe()
 	gint flags = fcntl(sigpipe[1], F_GETFL);
 	if(flags == -1)
 	{
-		g_print("FATAL: failed read signalpipe's flags: %s\n", strerror(errno));
+		g_print("%s: failed read signalpipe's flags: %s\n",
+				pc_program_invocation_name, strerror(errno));
 		return FALSE;
 	}
 
 	if(fcntl(sigpipe[1], F_SETFL, flags | O_NONBLOCK) == -1)
 	{
-		g_print("FATAL: failed set signalpipe's flags: %s\n", strerror(errno));
+		g_print("%s: failed set signalpipe's flags: %s\n",
+				pc_program_invocation_name, strerror(errno));
 		return FALSE;
 	}
 
@@ -109,7 +115,8 @@ static gboolean pc_sighandler_register_signals()
 	sigset_t mask;
 	if(sigfillset(&mask))
 	{
-		g_print("FATAL: failed create signalmask: %s\n", strerror(errno));
+		g_print("%s: failed create signalmask: %s\n",
+				pc_program_invocation_name, strerror(errno));
 		return FALSE;
 	}
 	
@@ -125,7 +132,8 @@ static gboolean pc_sighandler_register_signals()
 	{
 		if(sigaction(signals_to_catch[i], &act, NULL))
 		{
-			g_print("FATAL: failed set signalhandler: %s\n", strerror(errno));
+			g_print("%s: failed set signalhandler: %s\n",
+					pc_program_invocation_name, strerror(errno));
 			return FALSE;
 		}
 	}
@@ -145,8 +153,7 @@ gboolean pc_sighandler_init()
 	g_io_channel_set_encoding(io_channel, NULL, &error);
 	if(error)
 	{
-		g_print("FATAL: failed to set GIOChannel-encoding for "
-				"signalhandling: %s\n", error->message);
+		g_print("%s: failed to set GIOChannel-encoding for signalhandling: %s\n"				, pc_program_invocation_name, error->message);
 		g_error_free(error);
 		return FALSE;
 	}
@@ -155,8 +162,8 @@ gboolean pc_sighandler_init()
 			g_io_channel_get_flags(io_channel) | G_IO_FLAG_NONBLOCK, &error);
 	if(error)
 	{
-		g_print("FATAL: failed to set set sigpipe in non-blocking-mode: %s",
-				error->message);
+		g_print("%s: failed to set set sigpipe in non-blocking-mode: %s",
+				pc_program_invocation_name, error->message);
 		g_error_free(error);
 		return FALSE;
 	}

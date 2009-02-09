@@ -38,9 +38,6 @@ static GOptionEntry cmdline_opts[] =
 const PcCommandlineOpts* pc_commandline_parse(int* argc, char*** argv)
 {
 	gboolean err = FALSE;
-
-	pc_program_invocation_name = (*argv)[0];
-
 	GError* error = NULL;
 	GOptionContext* opt_context;
 	opt_context = g_option_context_new("- A highly modular panel for X");

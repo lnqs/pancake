@@ -15,24 +15,14 @@
  * with this program; if not, see <http://www.gnu.org/licenses/>.
  **/
 
-#ifndef CONFIGPARSER_H
-#define CONFIGPARSER_H
+#ifndef MISC_H
+#define MISC_H
 
 #include <gtk/gtk.h>
-#include "commandline.h"
-#include "types.h"
-#include "panel.h"
 
-/**
- * @brief Parses the configuration
- *
- * This function parses the configuration and loads modules specified
- * there. Loaded modules will get their configuration.
- *
- * @return TRUE if parsing the configuration succeeded, false otherwise
- **/
-gboolean pc_configparser_parse(
-		PcPanel* panel, const PcCommandlineOpts* cmdline_opts);
+/* Holds the program's name as in argv[0].
+ * It's only valid after pc_commandline_parse has been called */
+extern const gchar* pc_program_invocation_name;
 
 #endif
 

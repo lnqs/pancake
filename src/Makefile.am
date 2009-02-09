@@ -15,7 +15,10 @@ noinst_HEADERS = \
 	types.h
 
 pancakeinclude_HEADERS = \
-	module.h
+	types.h \
+	misc.h \
+	module.h \
+	optionconv.h
 
 pancake_SOURCES = \
 	main.c \
@@ -23,7 +26,8 @@ pancake_SOURCES = \
 	commandline.c \
 	modloader.c \
 	configparser.c \
-	panel.c
+	panel.c \
+	optionconv.c
 
 pancake_CFLAGS = \
 	-DMODULE_PATH="\"$(libdir)/pancake\""

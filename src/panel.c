@@ -19,6 +19,7 @@
 #include "types.h"
 #include "commandline.h"
 #include "configparser.h"
+#include "optionconv.h"
 
 #ifdef GDK_WINDOWING_X11
 #include <X11/X.h>
@@ -210,7 +211,7 @@ gboolean pc_panel_set_option(
 	if(!g_strcmp0(key, "alignment"))
 	{
 		PcAlignment align;
-		if(!pc_option_parse_alignment(value, &align))
+		if(!pc_optionconv_alignment(value, &align))
 			return FALSE;
 
 		pc_panel_set_align(panel, align);
@@ -218,7 +219,7 @@ gboolean pc_panel_set_option(
 	else if(!g_strcmp0(key, "width"))
 	{
 		gfloat width;
-		if(!pc_option_parse_float(value, &width))
+		if(!pc_optionconv_float(value, &width))
 			return FALSE;
 
 		pc_panel_set_width(panel, width);
@@ -226,7 +227,7 @@ gboolean pc_panel_set_option(
 	else if(!g_strcmp0(key, "height"))
 	{
 		gint height;
-		if(!pc_option_parse_int(value, &height))
+		if(!pc_optionconv_int(value, &height))
 			return FALSE;
 
 		pc_panel_set_height(panel, height);
@@ -234,7 +235,7 @@ gboolean pc_panel_set_option(
 	else if(!g_strcmp0(key, "strut_enabled"))
 	{
 		gboolean enabled;
-		if(!pc_option_parse_bool(value, &enabled))
+		if(!pc_optionconv_bool(value, &enabled))
 			return TRUE;
 
 		pc_panel_set_strut_enabled(panel, enabled);
