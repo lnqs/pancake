@@ -30,7 +30,7 @@ pancake_SOURCES = \
 	pc_optionconv.c
 
 pancake_CFLAGS = \
-	-DPC_MODULE_PATH="\"$(libdir)/pancake\""
+	-DPC_MODULE_PATH="\"$(libdir)/@PACKAGE@\""
 
 pancake_LDFLAGS = \
 	$(gtk_LIBS) \
