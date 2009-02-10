@@ -15,16 +15,18 @@
  * with this program; if not, see <http://www.gnu.org/licenses/>.
  **/
 
-#ifndef TYPES_H
-#define TYPES_H
+#ifndef PC_SIGHANDLER_H
+#define PC_SIGHANDLER_H
+
+#include <gtk/gtk.h>
 
 /**
- * @todo docs
+ * @brief Sets up the signalpipe for clean signalhandling
+ *
+ * Currently, every signal not ignoried by default and catchable will cause
+ * a clean shutdown
  **/
-typedef enum PcAlignment
-{
-	PC_ALIGN_TOP, PC_ALIGN_BOTTOM
-} PcAlignment;
+gboolean pc_sighandler_init();
 
 #endif
 

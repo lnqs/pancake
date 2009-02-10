@@ -15,11 +15,11 @@
  * with this program; if not, see <http://www.gnu.org/licenses/>.
  **/
 
-#ifndef PANEL_H
-#define PANEL_H
+#ifndef PC_PANEL_H
+#define PC_PANEL_H
 
 #include <gtk/gtk.h>
-#include "types.h"
+#include "pc_types.h"
 
 G_BEGIN_DECLS
 

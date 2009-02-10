@@ -15,11 +15,11 @@
  * with this program; if not, see <http://www.gnu.org/licenses/>.
  **/
 
-#include "modloader.h"
-#include "commandline.h"
+#include "pc_modloader.h"
+#include "pc_commandline.h"
 
-#ifndef MODULE_PATH
-#error "MODULE_PATH isn't defined!"
+#ifndef PC_MODULE_PATH
+#error "PC_MODULE_PATH isn't defined!"
 #endif
 
 static GList* plugins = 0;
@@ -61,7 +61,7 @@ PancakeModule* pc_modloader_load(PancakeModuleType type, const gchar* name)
 
 	if(!gmod)
 	{
-		gchar* path = g_module_build_path(MODULE_PATH, name);
+		gchar* path = g_module_build_path(PC_MODULE_PATH, name);
 		gmod = g_module_open(path, 0);
 		g_free(path);
 	}

@@ -15,18 +15,33 @@
  * with this program; if not, see <http://www.gnu.org/licenses/>.
  **/
 
-#ifndef SIGHANDLER_H
-#define SIGHANDLER_H
+#ifndef PC_MODLOADER_H
+#define PC_MODLOADER_H
 
 #include <gtk/gtk.h>
+#include "pc_commandline.h"
+#include "pc_module.h"
 
 /**
- * @brief Sets up the signalpipe for clean signalhandling
+ * @brief Initialises the module-loader
  *
- * Currently, every signal not ignoried by default and catchable will cause
- * a clean shutdown
+ * @param cmdline_opts The options parse from commandline
+ * @return TRUE on success, FALSE otherwise
  **/
-gboolean pc_sighandler_init();
+gboolean pc_modloader_init(const PcCommandlineOpts* cmdline_opts);
+
+/**
+ * @brief Loads a module
+ *
+ * @param name the name of the module to load
+ * @return the newly loaded module, or NULL if an error occured
+ **/
+PancakeModule* pc_modloader_load(PancakeModuleType type, const gchar* name);
+
+/**
+ * @brief Cleans up the module-subsystem
+ **/
+void pc_modloader_cleanup();
 
 #endif
 

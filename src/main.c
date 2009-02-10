@@ -17,12 +17,12 @@
 
 #include <locale.h>
 #include <gtk/gtk.h>
-#include "misc.h"
-#include "sighandler.h"
-#include "commandline.h"
-#include "modloader.h"
-#include "configparser.h"
-#include "panel.h"
+#include "pc_misc.h"
+#include "pc_sighandler.h"
+#include "pc_commandline.h"
+#include "pc_modloader.h"
+#include "pc_configparser.h"
+#include "pc_panel.h"
 
 const gchar* pc_program_invocation_name;
 

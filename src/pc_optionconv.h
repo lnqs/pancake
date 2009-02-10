@@ -15,11 +15,11 @@
  * with this program; if not, see <http://www.gnu.org/licenses/>.
  **/
 
-#ifndef OPTIONCONV_H
-#define OPTIONCONV_H
+#ifndef PC_OPTIONCONV_H
+#define PC_OPTIONCONV_H
 
 #include <gtk/gtk.h>
-#include "types.h"
+#include "pc_types.h"
 
 /**
  * @brief parses a PcAlignment from a string

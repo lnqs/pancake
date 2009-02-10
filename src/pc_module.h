@@ -15,8 +15,8 @@
  * with this program; if not, see <http://www.gnu.org/licenses/>.
  **/
 
-#ifndef MODULE_H
-#define MODULE_H
+#ifndef PC_MODULE_H
+#define PC_MODULE_H
 
 /**
  * @todo docs

@@ -15,14 +15,16 @@
  * with this program; if not, see <http://www.gnu.org/licenses/>.
  **/
 
-#ifndef MISC_H
-#define MISC_H
+#ifndef PC_TYPES_H
+#define PC_TYPES_H
 
-#include <gtk/gtk.h>
-
-/* Holds the program's name as in argv[0].
- * It's only valid after pc_commandline_parse has been called */
-extern const gchar* pc_program_invocation_name;
+/**
+ * @todo docs
+ **/
+typedef enum PcAlignment
+{
+	PC_ALIGN_TOP, PC_ALIGN_BOTTOM
+} PcAlignment;
 
 #endif
 

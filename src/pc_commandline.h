@@ -15,8 +15,8 @@
  * with this program; if not, see <http://www.gnu.org/licenses/>.
  **/
 
-#ifndef COMMANDLINE_H
-#define COMMANDLINE_H
+#ifndef PC_COMMANDLINE_H
+#define PC_COMMANDLINE_H
 
 #include <gtk/gtk.h>
 

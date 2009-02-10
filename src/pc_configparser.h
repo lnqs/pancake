@@ -15,13 +15,13 @@
  * with this program; if not, see <http://www.gnu.org/licenses/>.
  **/
 
-#ifndef CONFIGPARSER_H
-#define CONFIGPARSER_H
+#ifndef PC_CONFIGPARSER_H
+#define PC_CONFIGPARSER_H
 
 #include <gtk/gtk.h>
-#include "commandline.h"
-#include "types.h"
-#include "panel.h"
+#include "pc_commandline.h"
+#include "pc_types.h"
+#include "pc_panel.h"
 
 /**
  * @brief Parses the configuration

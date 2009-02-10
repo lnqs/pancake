@@ -17,13 +17,13 @@
 
 #define _POSIX_SOURCE
 
-#include "sighandler.h"
+#include "pc_sighandler.h"
 #include <unistd.h>
 #include <fcntl.h>
 #include <string.h>
 #include <signal.h>
 #include <errno.h>
-#include "misc.h"
+#include "pc_misc.h"
 
 static gint sigpipe[2];
 static GIOChannel* io_channel;

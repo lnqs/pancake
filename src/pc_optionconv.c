@@ -15,9 +15,9 @@
  * with this program; if not, see <http://www.gnu.org/licenses/>.
  **/
 
-#include "optionconv.h"
+#include "pc_optionconv.h"
 #include <stdlib.h>
-#include "misc.h"
+#include "pc_misc.h"
 
 gboolean pc_optionconv_alignment(const gchar* value, PcAlignment* target)
 {

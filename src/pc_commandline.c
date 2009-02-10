@@ -15,7 +15,7 @@
  * with this program; if not, see <http://www.gnu.org/licenses/>.
  **/
 
-#include "commandline.h"
+#include "pc_commandline.h"
 
 const gchar* pc_program_invocation_name;
 

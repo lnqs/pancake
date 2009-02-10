@@ -7,30 +7,30 @@ pancakeincludedir = $(includedir)/pancake
 bin_PROGRAMS = pancake
 
 noinst_HEADERS = \
-	sighandler.h \
-	commandline.h \
-	modloader.h \
-	configparser.h \
-	panel.h \
-	types.h
+	pc_sighandler.h \
+	pc_commandline.h \
+	pc_modloader.h \
+	pc_configparser.h \
+	pc_panel.h \
+	pc_types.h
 
 pancakeinclude_HEADERS = \
-	types.h \
-	misc.h \
-	module.h \
-	optionconv.h
+	pc_types.h \
+	pc_misc.h \
+	pc_module.h \
+	pc_optionconv.h
 
 pancake_SOURCES = \
 	main.c \
-	sighandler.c \
-	commandline.c \
-	modloader.c \
-	configparser.c \
-	panel.c \
-	optionconv.c
+	pc_sighandler.c \
+	pc_commandline.c \
+	pc_modloader.c \
+	pc_configparser.c \
+	pc_panel.c \
+	pc_optionconv.c
 
 pancake_CFLAGS = \
-	-DMODULE_PATH="\"$(libdir)/pancake\""
+	-DPC_MODULE_PATH="\"$(libdir)/pancake\""
 
 pancake_LDFLAGS = \
 	$(gtk_LIBS) \

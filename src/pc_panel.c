@@ -15,11 +15,11 @@
  * with this program; if not, see <http://www.gnu.org/licenses/>.
  **/
 
-#include "panel.h"
-#include "types.h"
-#include "commandline.h"
-#include "configparser.h"
-#include "optionconv.h"
+#include "pc_panel.h"
+#include "pc_types.h"
+#include "pc_commandline.h"
+#include "pc_configparser.h"
+#include "pc_optionconv.h"
 
 #ifdef GDK_WINDOWING_X11
 #include <X11/X.h>

@@ -15,10 +15,10 @@
  * with this program; if not, see <http://www.gnu.org/licenses/>.
  **/
 
-#include "configparser.h"
+#include "pc_configparser.h"
 #include <stdlib.h>
-#include "module.h"
-#include "modloader.h"
+#include "pc_module.h"
+#include "pc_modloader.h"
 
 static GKeyFile* pc_configparser_open_file_by_name(const gchar* name)
 {

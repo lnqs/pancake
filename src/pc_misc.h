@@ -15,33 +15,14 @@
  * with this program; if not, see <http://www.gnu.org/licenses/>.
  **/
 
-#ifndef MODLOADER_H
-#define MODLOADER_H
+#ifndef PC_MISC_H
+#define PC_MISC_H
 
 #include <gtk/gtk.h>
-#include "commandline.h"
-#include "module.h"
 
-/**
- * @brief Initialises the module-loader
- *
- * @param cmdline_opts The options parse from commandline
- * @return TRUE on success, FALSE otherwise
- **/
-gboolean pc_modloader_init(const PcCommandlineOpts* cmdline_opts);
-
-/**
- * @brief Loads a module
- *
- * @param name the name of the module to load
- * @return the newly loaded module, or NULL if an error occured
- **/
-PancakeModule* pc_modloader_load(PancakeModuleType type, const gchar* name);
-
-/**
- * @brief Cleans up the module-subsystem
- **/
-void pc_modloader_cleanup();
+/* Holds the program's name as in argv[0].
+ * It's only valid after pc_commandline_parse has been called */
+extern const gchar* pc_program_invocation_name;
 
 #endif
 
