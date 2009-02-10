@@ -29,7 +29,8 @@ AC_SUBST(libwnck_LIBS)
 
 AC_CONFIG_FILES([ \
 	Makefile \
-	src/Makefile
+	src/Makefile \
+	pancake.pc
 ])
 
 AC_OUTPUT

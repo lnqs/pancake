@@ -1,9 +1,5 @@
 SUBDIRS = src
 
-nobase_pkgdata_DATA = \
-	AUTHORS \
-	COPYING \
-	ChangeLog \
-	INSTALL \
-	NEWS \
-	README
+pkgconfigdir = $(libdir)/pkgconfig
+pkgconfig_DATA = pancake.pc
+
