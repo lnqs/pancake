@@ -19,8 +19,8 @@
 #define PC_MODLOADER_H
 
 #include <gtk/gtk.h>
+#include <pc_module.h>
 #include "pc_commandline.h"
-#include "pc_module.h"
 #include "pc_panel.h"
 
 /**

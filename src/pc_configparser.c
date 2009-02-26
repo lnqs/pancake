@@ -17,7 +17,7 @@
 
 #include "pc_configparser.h"
 #include <stdlib.h>
-#include "pc_module.h"
+#include <pc_module.h>
 #include "pc_modloader.h"
 
 gboolean pc_configparser_parse(

@@ -1,0 +1,24 @@
+INCLUDES = \
+	$(gtk_CFLAGS)
+
+libpancakeincludedir = $(includedir)/pancake
+
+lib_LTLIBRARIES = libpancake.la
+
+libpancakeinclude_HEADERS =
+
+libpancake_la_SOURCES = \
+	pc_types.h \
+	pc_misc.h \
+	pc_module.h \
+	pc_optionconv.h \
+	pc_style.h
+
+libpancake_la_SOURCES = \
+	pc_optionconv.c \
+	pc_style.c
+
+libpancake_la_LDFLAGS = \
+	$(gtk_LIBS) \
+	-rdynamic
+

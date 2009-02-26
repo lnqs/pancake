@@ -67,7 +67,7 @@ static PancakeTheme pc_defaulttheme = {
 	.name       = "defaulttheme",
 	.init       = NULL,
 	.fini       = NULL,
-	.new_style  = &gtk_defaulttheme_style_new
+	.new_style  = &pc_defaulttheme_style_new
 };
 
 PANCAKE_THEME(pc_defaulttheme)

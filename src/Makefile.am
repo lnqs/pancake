@@ -1,8 +1,7 @@
 INCLUDES = \
+	-I$(top_srcdir)/lib \
 	$(gtk_CFLAGS) \
 	$(libwnck_CFLAGS)
-
-pancakeincludedir = $(includedir)/pancake
 
 bin_PROGRAMS = pancake
 
@@ -11,15 +10,7 @@ noinst_HEADERS = \
 	pc_commandline.h \
 	pc_modloader.h \
 	pc_configparser.h \
-	pc_panel.h \
-	pc_types.h
-
-pancakeinclude_HEADERS = \
-	pc_types.h \
-	pc_misc.h \
-	pc_module.h \
-	pc_optionconv.h \
-	pc_style.h
+	pc_panel.h
 
 pancake_SOURCES = \
 	main.c \
@@ -27,14 +18,13 @@ pancake_SOURCES = \
 	pc_commandline.c \
 	pc_modloader.c \
 	pc_configparser.c \
-	pc_panel.c \
-	pc_optionconv.c \
-	pc_style.c
+	pc_panel.c
 
 pancake_CFLAGS = \
 	-DPC_MODULE_PATH="\"$(libdir)/@PACKAGE@\""
 
 pancake_LDFLAGS = \
 	$(gtk_LIBS) \
-	$(libwnck_LIBS)
+	$(libwnck_LIBS) \
+	$(top_srcdir)/lib/libpancake.la
 

@@ -23,7 +23,7 @@
 #include <string.h>
 #include <signal.h>
 #include <errno.h>
-#include "pc_misc.h"
+#include <pc_misc.h>
 
 static gint sigpipe[2];
 static GIOChannel* io_channel;

@@ -19,7 +19,7 @@
 #define PC_PANEL_H
 
 #include <gtk/gtk.h>
-#include "pc_types.h"
+#include <pc_types.h>
 
 G_BEGIN_DECLS
 

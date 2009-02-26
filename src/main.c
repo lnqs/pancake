@@ -17,7 +17,7 @@
 
 #include <locale.h>
 #include <gtk/gtk.h>
-#include "pc_misc.h"
+#include <pc_misc.h>
 #include "pc_sighandler.h"
 #include "pc_commandline.h"
 #include "pc_modloader.h"

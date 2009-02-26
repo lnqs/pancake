@@ -29,6 +29,7 @@ AC_SUBST(libwnck_LIBS)
 
 AC_CONFIG_FILES([ \
 	Makefile \
+	lib/Makefile \
 	src/Makefile \
 	modules/Makefile \
 	modules/clock/Makefile \

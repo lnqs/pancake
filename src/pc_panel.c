@@ -16,12 +16,12 @@
  **/
 
 #include "pc_panel.h"
-#include "pc_types.h"
+#include <pc_optionconv.h>
+#include <pc_style.h>
+#include <pc_types.h>
 #include "pc_commandline.h"
 #include "pc_configparser.h"
-#include "pc_optionconv.h"
 #include "pc_modloader.h"
-#include "pc_style.h"
 
 #ifdef GDK_WINDOWING_X11
 #include <X11/X.h>
@@ -30,7 +30,7 @@
 #include <X11/Xatom.h>
 #include <gdk/gdkx.h>
 #else
-#error "Only GDKs X11-backend is supported currently"
+#error "Only the X11-backend of GDK is supported currently"
 #endif
 
 #define WNCK_I_KNOW_THIS_IS_UNSTABLE
@@ -172,7 +172,9 @@ static gboolean pc_panel_expose(GtkWidget* widget, GdkEventExpose* ev)
 		return TRUE;
 	}
 	
-	return GTK_WIDGET_GET_CLASS(widget)->expose_event(widget, ev);
+	gtk_paint_flat_box(widget->style, widget->window, GTK_STATE_NORMAL,
+			GTK_SHADOW_NONE, &ev->area, widget, "base", 0, 0, -1, -1);
+	return TRUE;
 }
 
 static void pc_panel_set_property(GObject* object,
