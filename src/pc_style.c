@@ -15,28 +15,18 @@
  * with this program; if not, see <http://www.gnu.org/licenses/>.
  **/
 
-#include "pc_configparser.h"
-#include <stdlib.h>
-#include "pc_module.h"
-#include "pc_modloader.h"
+#include "pc_style.h"
 
-gboolean pc_configparser_parse(
-		PcPanel* panel, const PcCommandlineOpts* cmdline_opts)
+G_DEFINE_TYPE(PcStyle, pc_style, GTK_TYPE_STYLE);
+
+#define PC_STYLE_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), PC_TYPE_STYLE, PcStylePrivate))
+
+static void pc_style_class_init(PcStyleClass* klass)
 {
-	/* This is only for testing -- real configfileparsing has to be added */
-	PancakeTheme* theme = pc_modloader_load_theme("defaulttheme");
-	GtkStyle* style = GTK_STYLE(theme->new_style());
+	klass->draw_panel = NULL;
+}
 
-	gtk_widget_set_style(GTK_WIDGET(panel), style);
-
-	GtkWidget* hbox = gtk_hbox_new(FALSE, 3);
-	gtk_container_add(GTK_CONTAINER(panel), hbox);
-
-	PancakePlugin* clockmod = pc_modloader_load_plugin("clock");
-	GtkWidget* clock = clockmod->new_widget();
-	gtk_widget_set_style(clock, style);
-	gtk_container_add(GTK_CONTAINER(hbox), clock);
-
-	return TRUE;
+static void pc_style_init(PcStyle* style)
+{
 }
 

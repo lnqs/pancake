@@ -18,51 +18,50 @@
 #include "pc_modloader.h"
 #include "pc_commandline.h"
 
-#ifndef PC_MODULE_PATH
-#error "PC_MODULE_PATH isn't defined!"
-#endif
+static GList* plugins = NULL;
+static PancakeTheme* theme = NULL;
+static const gchar* modpath_arg = NULL;
 
-static GList* plugins = 0;
-static PancakeModule* theme = 0;
-static const gchar* modpath_arg = 0;
-
-gboolean pc_modloader_init(const PcCommandlineOpts* cmdline_opts)
+static GModule* pc_modload_open_modfile(const gchar* name)
 {
-	modpath_arg = cmdline_opts->module_path;
-	return TRUE;
-}
-
-PancakeModule* pc_modloader_load(PancakeModuleType type, const gchar* name)
-{
-	if(type == PC_MODTYPE_PLUGIN && theme)
-	{
-		g_print("%s: attempt to open second theme-module, but only one "
-				"may be used\n", pc_program_invocation_name);
-		return NULL;
-	}
-
 	GModule* gmod = NULL;
+	gchar* fullname = g_strconcat("lib", name, NULL);
 	
 	if(modpath_arg)
 	{
-		gchar* path = g_module_build_path(modpath_arg, name);
+		gchar* path = g_module_build_path(modpath_arg, fullname);
 		gmod = g_module_open(path, 0);
+
+		if(!gmod)
+			g_print("%s: couldn't open module %s at %s: %s\n",
+					pc_program_invocation_name, name, path, g_module_error());
+
 		g_free(path);
 	}
 
 	if(!gmod)
 	{
 		gchar* path1 = g_strconcat(g_get_home_dir(), "/.pancake/modules", NULL);
-		gchar* path2 = g_module_build_path(path1, name);
+		gchar* path2 = g_module_build_path(path1, fullname);
 		gmod = g_module_open(path2, 0);
+
+		if(!gmod)
+			g_print("%s: couldn't open module %s at %s: %s\n",
+					pc_program_invocation_name, name, path2, g_module_error());
+
 		g_free(path1);
 		g_free(path2);
 	}
 
 	if(!gmod)
 	{
-		gchar* path = g_module_build_path(PC_MODULE_PATH, name);
+		gchar* path = g_module_build_path(PC_MODULE_PATH, fullname);
 		gmod = g_module_open(path, 0);
+
+		if(!gmod)
+			g_print("%s: couldn't open module %s at %s: %s\n",
+					pc_program_invocation_name, name, path, g_module_error());
+
 		g_free(path);
 	}
 
@@ -70,48 +69,125 @@ PancakeModule* pc_modloader_load(PancakeModuleType type, const gchar* name)
 	{
 		g_print("%s: module %s not found at any search-location\n",
 				pc_program_invocation_name, name);
-		return NULL;
 	}
+	
+	g_free(fullname);
+	return gmod;
+}
 
-	PancakeModule* modinfo;
-	if(!g_module_symbol(gmod, "pancake_modinfo", (gpointer*)&modinfo))
+gboolean pc_modloader_init(const PcCommandlineOpts* cmdline_opts)
+{
+	modpath_arg = cmdline_opts->module_path;
+	return TRUE;
+}
+
+PancakePlugin* pc_modloader_load_plugin(const gchar* name)
+{
+	GModule* gmod = pc_modload_open_modfile(name);
+	if(!gmod)
+		return NULL;
+
+	PancakePlugin* (*get_plugininfo_func)();
+	if(!g_module_symbol(gmod, "_pc_mod_get_plugininfo",
+			(gpointer*)&get_plugininfo_func))
 	{
-		g_print("%s: module %s isn't a pancake-module\n",
-				pc_program_invocation_name, name);
-		if(!g_module_close(gmod))
-			g_print("%s: failed to close module %s\n",
-					pc_program_invocation_name, name);
-		return NULL;
+		g_print("%s\n%s: failed to initialize plugin %s\n",
+				g_module_error(), pc_program_invocation_name, name);
+		goto error;
 	}
 
-	if(modinfo->type != type)
+	PancakePlugin* modinfo;
+	if(!get_plugininfo_func || !(modinfo = (*get_plugininfo_func)()))
 	{
-		g_print("%s: module %s is not of the expected type\n",
+		g_print("%s: module %s isn't a pancake-plugin\n",
 				pc_program_invocation_name, name);
-		if(!g_module_close(gmod))
-			g_print("%s: failed to close module %s\n",
-					pc_program_invocation_name, name);
-		return NULL;
+		goto error;
 	}
 
-	if(!modinfo->init())
+	if(modinfo->init && !(*modinfo->init)())
 	{
 		g_print("%s: initialisation of module %s failed\n",
 				pc_program_invocation_name, name);
-		if(!g_module_close(gmod))
-			g_print("%s: failed to close module %s\n",
-					pc_program_invocation_name, name);
-		return NULL;
+		goto error;
 	}
 	
-	if(type == PC_MODTYPE_THEME)
-		theme = modinfo;
-	else
-		plugins = g_list_append(plugins, modinfo);
-
+	plugins = g_list_append(plugins, modinfo);
 	modinfo->gmodule = gmod;
 
 	return modinfo;
+
+error:
+	if(gmod && !g_module_close(gmod))
+		g_print("%s: failed to close module %s\n",
+				pc_program_invocation_name, name);
+	return NULL;
+}
+
+PancakeTheme* pc_modloader_load_theme(const gchar* name)
+{
+	if(theme)
+	{
+		g_print("%s: attempt to load theme %s, but there's already "
+				"one registered\n", pc_program_invocation_name, name);
+		return NULL;
+	}
+
+	GModule* gmod = pc_modload_open_modfile(name);
+	if(!gmod)
+		return NULL;
+	
+	PancakeTheme* (*get_themeinfo_func)();
+	if(!g_module_symbol(gmod, "_pc_mod_get_themeinfo",
+			(gpointer*)&get_themeinfo_func))
+	{
+		g_print("%s\n%s: failed to initialize theme %s\n",
+				g_module_error(), pc_program_invocation_name, name);
+		goto error;
+	}
+
+	PancakeTheme* modinfo;
+	if(!get_themeinfo_func || !(modinfo = (*get_themeinfo_func)()))
+	{
+		g_print("%s: module %s isn't a pancake-theme\n",
+				pc_program_invocation_name, name);
+		goto error;
+	}
+
+	if(modinfo->init && !(*modinfo->init)())
+	{
+		g_print("%s: initialisation of module %s failed\n",
+				pc_program_invocation_name, name);
+		goto error;
+	}
+	
+	theme = modinfo;
+	modinfo->gmodule = gmod;
+
+	return modinfo;
+
+error:
+	if(gmod && !g_module_close(gmod))
+		g_print("%s: failed to close module %s\n",
+				pc_program_invocation_name, name);
+	return NULL;
+}
+
+PancakePlugin* pc_modloader_get_plugin(const gchar* name)
+{
+	for(GList* cur = plugins; cur; cur = g_list_next(cur))
+	{
+		PancakePlugin* d = cur->data;
+
+		if(d->name == name)
+			return d;
+	}
+
+	return NULL;
+}
+
+PancakeTheme* pc_modloader_get_theme()
+{
+	return theme;
 }
 
 void pc_modloader_cleanup()
@@ -119,8 +195,9 @@ void pc_modloader_cleanup()
 	GList* cur = plugins;
 	while(cur)
 	{
-		PancakeModule* d = cur->data;
-		d->fini();
+		PancakePlugin* d = cur->data;
+		if(d->fini)
+			(*d->fini)();
 		g_module_close(d->gmodule);
 
 		GList* next = g_list_next(cur);
@@ -130,9 +207,10 @@ void pc_modloader_cleanup()
 
 	if(theme)
 	{
-		theme->fini();
+		if(theme->fini)
+			(*theme->fini)();
 		g_module_close(theme->gmodule);
-		theme = 0;
+		theme = NULL;
 	}
 }
 

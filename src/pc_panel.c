@@ -20,6 +20,8 @@
 #include "pc_commandline.h"
 #include "pc_configparser.h"
 #include "pc_optionconv.h"
+#include "pc_modloader.h"
+#include "pc_style.h"
 
 #ifdef GDK_WINDOWING_X11
 #include <X11/X.h>
@@ -35,6 +37,16 @@
 #include <libwnck/libwnck.h>
 
 G_DEFINE_TYPE(PcPanel, pc_panel, GTK_TYPE_WINDOW);
+
+enum
+{
+	PROP_0,
+	PROP_ALIGN,
+	PROP_WIDTH,
+	PROP_HEIGHT,
+	PROP_STRUT_ENABLED,
+	PROP_LAST
+};
 
 #define PC_PANEL_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), PC_TYPE_PANEL, PcPanelPrivate))
 
@@ -53,82 +65,6 @@ enum
 	STRUT_TOP = 2,
 	STRUT_BOTTOM = 3
 };
-
-static void pc_panel_class_init(PcPanelClass* class);
-static void pc_panel_init(PcPanel* panel);
-static gboolean pc_panel_configure_event(GtkWidget* widget,
-		GdkEventConfigure* ev, gpointer data);
-static void pc_panel_align_size_pos(PcPanel* panel);
-static void pc_panel_update_strut(PcPanel* panel);
-
-static void pc_panel_class_init(PcPanelClass* class)
-{
-	GObjectClass* obj_class = G_OBJECT_CLASS(class);
-	g_type_class_add_private(obj_class, sizeof(PcPanelPrivate));
-}
-
-static void pc_panel_init(PcPanel* panel)
-{
-	PcPanelPrivate* priv = PC_PANEL_GET_PRIVATE(panel);
-
-	priv->width = 0.95f;
-	priv->height = 24;
-	priv->align = PC_ALIGN_BOTTOM;
-	priv->strut_enabled = TRUE;
-
-	gtk_window_stick(GTK_WINDOW(panel));
-	gtk_window_set_type_hint(GTK_WINDOW(panel), GDK_WINDOW_TYPE_HINT_DOCK);
-	gtk_widget_set_app_paintable(GTK_WIDGET(panel), TRUE);
-	gtk_window_set_decorated(GTK_WINDOW(panel), FALSE);
-	gtk_window_set_deletable(GTK_WINDOW(panel), FALSE);
-	gtk_window_set_skip_taskbar_hint(GTK_WINDOW(panel), TRUE);
-	gtk_window_set_skip_pager_hint(GTK_WINDOW(panel), TRUE);
-	wnck_set_client_type(WNCK_CLIENT_TYPE_PAGER);
-
-	g_signal_connect(G_OBJECT(panel), "configure-event",
-			G_CALLBACK(pc_panel_configure_event), NULL);
-}
-
-GtkWidget* pc_panel_new()
-{
-	return GTK_WIDGET(g_object_new(PC_TYPE_PANEL, NULL));
-}
-
-static gboolean pc_panel_configure_event(GtkWidget* widget,
-		GdkEventConfigure* ev, gpointer data)
-{
-	pc_panel_align_size_pos(PC_PANEL(widget));
-	pc_panel_update_strut(PC_PANEL(widget));
-
-	return TRUE;
-}
-
-void pc_panel_set_width(PcPanel* panel, gfloat width)
-{
-	PC_PANEL_GET_PRIVATE(panel)->width = width;
-	pc_panel_align_size_pos(panel);
-	pc_panel_update_strut(panel);
-}
-
-void pc_panel_set_height(PcPanel* panel, gint height)
-{
-	PC_PANEL_GET_PRIVATE(panel)->height = height;
-	pc_panel_align_size_pos(panel);
-	pc_panel_update_strut(panel);
-}
-
-void pc_panel_set_align(PcPanel* panel, PcAlignment align)
-{
-	PC_PANEL_GET_PRIVATE(panel)->align = align;
-	pc_panel_align_size_pos(panel);
-	pc_panel_update_strut(panel);
-}
-
-void pc_panel_set_strut_enabled(PcPanel* panel, gboolean enabled)
-{
-	PC_PANEL_GET_PRIVATE(panel)->strut_enabled = enabled;
-	pc_panel_update_strut(panel);
-}
 
 static void pc_panel_align_size_pos(PcPanel* panel)
 {
@@ -203,6 +139,194 @@ static void pc_panel_update_strut(PcPanel* panel)
 		XDeleteProperty(display, window, net_wm_strut);
 		gdk_error_trap_pop();
 	}
+}
+
+static gboolean pc_panel_configure_event(GtkWidget* widget,
+		GdkEventConfigure* ev, gpointer data)
+{
+	pc_panel_align_size_pos(PC_PANEL(widget));
+	pc_panel_update_strut(PC_PANEL(widget));
+
+	return TRUE;
+}
+
+static gboolean pc_panel_expose(GtkWidget* widget, GdkEventExpose* ev)
+{
+	if(PC_IS_STYLE(widget->style) && PC_STYLE_GET_CLASS(
+				widget->style)->draw_panel)
+	{
+		gint border_width = GTK_CONTAINER(widget)->border_width;
+
+		(*PC_STYLE_GET_CLASS(widget->style)->draw_panel)(
+				widget->style,
+				widget->window,
+				GTK_STATE_NORMAL,
+				GTK_SHADOW_OUT,
+				&ev->area, widget,
+				NULL,
+				widget->allocation.x,
+				widget->allocation.y,
+				widget->allocation.width - border_width * 2,
+				widget->allocation.height - border_width * 2);
+
+		return TRUE;
+	}
+	
+	return GTK_WIDGET_GET_CLASS(widget)->expose_event(widget, ev);
+}
+
+static void pc_panel_set_property(GObject* object,
+		guint prop_id, const GValue* value, GParamSpec* pspec)
+{
+	PcPanel* panel = PC_PANEL(object);
+	PcPanelPrivate* priv = PC_PANEL_GET_PRIVATE(object);
+	
+	switch(prop_id)
+	{
+		case PROP_ALIGN:
+			priv->align = g_value_get_int(value);
+			pc_panel_align_size_pos(panel);
+			break;
+
+		case PROP_WIDTH:
+			priv->width = g_value_get_float(value);
+			pc_panel_align_size_pos(panel);
+			pc_panel_update_strut(panel);
+			break;
+
+		case PROP_HEIGHT:
+			priv->height = g_value_get_int(value);
+			pc_panel_align_size_pos(panel);
+			pc_panel_update_strut(panel);
+			break;
+
+		case PROP_STRUT_ENABLED:
+			priv->strut_enabled = g_value_get_boolean(value);
+			pc_panel_update_strut(panel);
+			break;
+
+		default:
+	    	G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
+			break;
+    }
+}
+
+static void pc_panel_get_property(GObject* object,
+		guint prop_id, GValue* value, GParamSpec* pspec)
+{
+	PcPanelPrivate* priv = PC_PANEL_GET_PRIVATE(object);
+
+	switch(prop_id)
+	{
+		case PROP_ALIGN:
+			g_value_set_int(value, priv->align);
+			break;
+
+		case PROP_WIDTH:
+			g_value_set_float(value, priv->width);
+			break;
+
+		case PROP_HEIGHT:
+			g_value_set_int(value, priv->height);
+			break;
+
+		case PROP_STRUT_ENABLED:
+			g_value_set_boolean(value, priv->strut_enabled);
+			break;
+	
+		default:
+	    	G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
+			break;
+    }
+}
+
+static void pc_panel_class_init(PcPanelClass* class)
+{
+	GObjectClass* obj_class = G_OBJECT_CLASS(class);
+	GtkWidgetClass* widget_class = GTK_WIDGET_CLASS(class);
+
+	obj_class->set_property = &pc_panel_set_property;
+	obj_class->get_property = &pc_panel_get_property;
+
+	widget_class->expose_event = pc_panel_expose;
+
+	g_object_class_install_property(obj_class, PROP_ALIGN,
+			g_param_spec_int("align",
+					"Alignment of the panel",
+					"The panel's alignment. Default: BOTTOM",
+					PC_ALIGN_0, PC_ALIGN_LAST,
+					PC_ALIGN_BOTTOM,
+					G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
+	g_object_class_install_property(obj_class, PROP_WIDTH,
+			g_param_spec_float("width",
+					"The panel's width",
+					"The panel's width, relativ to the width of screen in "
+							"range 0.0f..1.0f. Default: 0.95f",
+					0.0f, 1.0f,
+					0.95f,
+					G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
+	g_object_class_install_property(obj_class, PROP_HEIGHT,
+			g_param_spec_int("height",
+					"The panel's height",
+					"The panel's height in pixels. Default: 24",
+					0, G_MAXINT,
+					24,
+					G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
+	g_object_class_install_property(obj_class, PROP_STRUT_ENABLED,
+			g_param_spec_boolean("strut-enabled",
+					"if the shall set a strut",
+					"Holds if the panel shall set a strut. Default: TRUE",
+					TRUE,
+					G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
+
+	g_type_class_add_private(obj_class, sizeof(PcPanelPrivate));
+}
+
+static void pc_panel_init(PcPanel* panel)
+{
+	gtk_window_stick(GTK_WINDOW(panel));
+	gtk_window_set_type_hint(GTK_WINDOW(panel), GDK_WINDOW_TYPE_HINT_DOCK);
+	gtk_widget_set_app_paintable(GTK_WIDGET(panel), TRUE);
+	gtk_window_set_decorated(GTK_WINDOW(panel), FALSE);
+	gtk_window_set_deletable(GTK_WINDOW(panel), FALSE);
+	gtk_window_set_skip_taskbar_hint(GTK_WINDOW(panel), TRUE);
+	gtk_window_set_skip_pager_hint(GTK_WINDOW(panel), TRUE);
+	wnck_set_client_type(WNCK_CLIENT_TYPE_PAGER);
+
+	g_signal_connect(G_OBJECT(panel), "configure-event",
+			G_CALLBACK(pc_panel_configure_event), NULL);
+}
+
+GtkWidget* pc_panel_new()
+{
+	return GTK_WIDGET(g_object_new(PC_TYPE_PANEL, NULL));
+}
+
+void pc_panel_set_width(PcPanel* panel, gfloat width)
+{
+	PC_PANEL_GET_PRIVATE(panel)->width = width;
+	pc_panel_align_size_pos(panel);
+	pc_panel_update_strut(panel);
+}
+
+void pc_panel_set_height(PcPanel* panel, gint height)
+{
+	PC_PANEL_GET_PRIVATE(panel)->height = height;
+	pc_panel_align_size_pos(panel);
+	pc_panel_update_strut(panel);
+}
+
+void pc_panel_set_align(PcPanel* panel, PcAlignment align)
+{
+	PC_PANEL_GET_PRIVATE(panel)->align = align;
+	pc_panel_align_size_pos(panel);
+	pc_panel_update_strut(panel);
+}
+
+void pc_panel_set_strut_enabled(PcPanel* panel, gboolean enabled)
+{
+	PC_PANEL_GET_PRIVATE(panel)->strut_enabled = enabled;
+	pc_panel_update_strut(panel);
 }
 
 gboolean pc_panel_set_option(

@@ -24,6 +24,8 @@
 #include "pc_configparser.h"
 #include "pc_panel.h"
 
+/* TODO: unify logging with the glib-logging-functions */
+
 const gchar* pc_program_invocation_name;
 
 static void pc_i18n_init()
@@ -52,7 +54,18 @@ int main(int argc, char** argv)
 	GtkWidget* panel = pc_panel_new();
 
 	if(!pc_configparser_parse((PcPanel*)panel, cmdline_opts))
+	{
+		pc_modloader_cleanup();
 		return 2;
+	}
+
+	PancakeTheme* theme = pc_modloader_get_theme();
+	if(!theme)
+	{
+		g_print("%s: No theme loaded\n", pc_program_invocation_name);
+		pc_modloader_cleanup();
+		return 2;
+	}
 
 	gtk_widget_show_all(panel);
 	gtk_main();

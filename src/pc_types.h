@@ -23,7 +23,10 @@
  **/
 typedef enum PcAlignment
 {
-	PC_ALIGN_TOP, PC_ALIGN_BOTTOM
+	PC_ALIGN_0,
+	PC_ALIGN_TOP,
+	PC_ALIGN_BOTTOM,
+	PC_ALIGN_LAST
 } PcAlignment;
 
 #endif

@@ -21,8 +21,8 @@ const gchar* pc_program_invocation_name;
 
 static PcCommandlineOpts pc_commandline_opts =
 {
-	.config_path = 0,
-	.module_path = 0
+	.config_path = NULL,
+	.module_path = NULL
 };
 
 /* possible commandline options */
@@ -40,7 +40,8 @@ const PcCommandlineOpts* pc_commandline_parse(int* argc, char*** argv)
 	gboolean err = FALSE;
 	GError* error = NULL;
 	GOptionContext* opt_context;
-	opt_context = g_option_context_new("- A highly modular panel for X");
+	opt_context = g_option_context_new(NULL);
+	g_option_context_set_summary(opt_context, "A highly modular panel for X");
 	g_option_context_add_main_entries(opt_context, cmdline_opts, NULL);
 	GOptionGroup* default_group = gtk_get_option_group(TRUE);
 	g_option_context_add_group(opt_context, default_group);

@@ -18,42 +18,71 @@
 #ifndef PC_MODULE_H
 #define PC_MODULE_H
 
-/**
- * @todo docs
- **/
-typedef enum PancakeModuleType
-{
-	PC_MODTYPE_THEME,
-	PC_MODTYPE_PLUGIN
-} PancakeModuleType;
+#include <gtk/gtk.h>
+#include "pc_style.h"
 
 /**
- * @todo docs
+ * @brief Macro to define a interface in plugins usable by pancake
  **/
-typedef struct PancakeModule
-{
-	GModule* gmodule;
-	PancakeModuleType type;
-	gboolean (*init)();
-	void (*fini)();
-	gboolean (*set_option)(const gchar*, const gchar*);
-} PancakeModule;
+#define PANCAKE_PLUGIN(modinfo) \
+		PancakePlugin* _pc_mod_get_plugininfo() { return &modinfo; }
 
 /**
- * @todo docs
+ * @brief Macro to define a interface in themes usable by pancake
  **/
-typedef struct PancakeTheme
-{
-	PancakeModule mod;
-} PancakeTheme;
+#define PANCAKE_THEME(modinfo) \
+		PancakeTheme* _pc_mod_get_themeinfo() { return &modinfo; }
 
 /**
- * @todo docs
+ * @brief Plugin providing new widgets for the panel
  **/
 typedef struct PancakePlugin
 {
-	PancakeModule mod;
+	GModule* gmodule; //!< set by pancake. Ignore it from within modules.
+
+	//! Has to be set to a unique name to identify the plugin
+	const gchar* name;
+
+	//! called immediatly after loading the plugin -- the plugin can use
+	//! this to allocated static ressources shared over multiple instaces,
+	//! initialize data, etc.
+	//! Has to return TRUE on success or FALSE if an error occured
+	gboolean (*init)();
+
+	//! called when the plugin is unloaded to give the plugin the chance
+	//! to clean up and deallocate ressources
+	void (*fini)();
+
+	//! called when a new instace of the plugin's widget has to be created	
+	GtkWidget* (*new_widget)();
 } PancakePlugin;
+
+/**
+ * @brief The for drawing the panel and widgets within
+ **/
+typedef struct PancakeTheme
+{
+	GModule* gmodule; //!< set by pancake. Ignore it from within modules.
+
+	//! Has to be set to a unique name to identify the theme 
+	const gchar* name;
+
+	//! called immediatly after loading the theme -- the theme can use
+	//! this to allocated static ressources shared over multiple instaces,
+	//! initialize data, etc.
+	//! Has to return TRUE on success or FALSE if an error occured
+	gboolean (*init)();
+
+	//! called when the theme is unloaded to give the plugin the chance
+	//! to clean up and deallocate ressources
+	void (*fini)();
+
+	//! called by pancake when a new instance of the theme has to be created.
+	//! A GtkStyle is fine, but usually you want to return an instance of a
+	//! class derived from from PcStyle, since this is able to draw the
+	//! panel in a less generic way
+	GtkStyle* (*new_style)();
+} PancakeTheme;
 
 #endif
 

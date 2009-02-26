@@ -10,7 +10,7 @@ AC_PROG_LIBTOOL
 
 AC_DEFINE(PACKAGE_BUGREPORT, "simon.schoenfeld@web.de")
 
-CPPFLAGS="$CPPFLAGS -Wall -Werror -std=c99"
+CFLAGS="$CPPFLAGS -Wall -Werror -std=c99 -g"
 
 ### Check for dependencies
 # GTK+-2
@@ -30,6 +30,9 @@ AC_SUBST(libwnck_LIBS)
 AC_CONFIG_FILES([ \
 	Makefile \
 	src/Makefile \
+	modules/Makefile \
+	modules/clock/Makefile \
+	modules/defaulttheme/Makefile \
 	pancake.pc
 ])
 

@@ -18,7 +18,8 @@ pancakeinclude_HEADERS = \
 	pc_types.h \
 	pc_misc.h \
 	pc_module.h \
-	pc_optionconv.h
+	pc_optionconv.h \
+	pc_style.h
 
 pancake_SOURCES = \
 	main.c \
@@ -27,7 +28,8 @@ pancake_SOURCES = \
 	pc_modloader.c \
 	pc_configparser.c \
 	pc_panel.c \
-	pc_optionconv.c
+	pc_optionconv.c \
+	pc_style.c
 
 pancake_CFLAGS = \
 	-DPC_MODULE_PATH="\"$(libdir)/@PACKAGE@\""
