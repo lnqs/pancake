@@ -150,6 +150,17 @@ static gboolean pc_panel_configure_event(GtkWidget* widget,
 	return TRUE;
 }
 
+static void pc_panel_expose_child(GtkWidget* child, gpointer client_data)
+{
+	struct {
+		GtkWidget* container;
+		GdkEventExpose* event;
+	}* data = client_data;
+
+	gtk_container_propagate_expose(GTK_CONTAINER(data->container),
+			child, data->event);
+}
+
 static gboolean pc_panel_expose(GtkWidget* widget, GdkEventExpose* ev)
 {
 	if(PC_IS_STYLE(widget->style) && PC_STYLE_GET_CLASS(
@@ -168,12 +179,24 @@ static gboolean pc_panel_expose(GtkWidget* widget, GdkEventExpose* ev)
 				widget->allocation.y,
 				widget->allocation.width - border_width * 2,
 				widget->allocation.height - border_width * 2);
-
-		return TRUE;
 	}
+	else
+	{
+		gtk_paint_flat_box(widget->style, widget->window, GTK_STATE_NORMAL,
+				GTK_SHADOW_NONE, &ev->area, widget, "base", 0, 0, -1, -1);
+	}
+
+	struct {
+    	GtkWidget *container;
+	    GdkEventExpose *event;
+	} data;
+
+	data.container = widget;
+	data.event = ev;
+
+	gtk_container_forall(GTK_CONTAINER(widget),
+			pc_panel_expose_child, &data);
 	
-	gtk_paint_flat_box(widget->style, widget->window, GTK_STATE_NORMAL,
-			GTK_SHADOW_NONE, &ev->area, widget, "base", 0, 0, -1, -1);
 	return TRUE;
 }
 

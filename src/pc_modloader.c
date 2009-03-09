@@ -31,11 +31,6 @@ static GModule* pc_modload_open_modfile(const gchar* name)
 	{
 		gchar* path = g_module_build_path(modpath_arg, fullname);
 		gmod = g_module_open(path, 0);
-
-		if(!gmod)
-			g_print("%s: couldn't open module %s at %s: %s\n",
-					pc_program_invocation_name, name, path, g_module_error());
-
 		g_free(path);
 	}
 
@@ -44,11 +39,6 @@ static GModule* pc_modload_open_modfile(const gchar* name)
 		gchar* path1 = g_strconcat(g_get_home_dir(), "/.pancake/modules", NULL);
 		gchar* path2 = g_module_build_path(path1, fullname);
 		gmod = g_module_open(path2, 0);
-
-		if(!gmod)
-			g_print("%s: couldn't open module %s at %s: %s\n",
-					pc_program_invocation_name, name, path2, g_module_error());
-
 		g_free(path1);
 		g_free(path2);
 	}
@@ -57,18 +47,13 @@ static GModule* pc_modload_open_modfile(const gchar* name)
 	{
 		gchar* path = g_module_build_path(PC_MODULE_PATH, fullname);
 		gmod = g_module_open(path, 0);
-
-		if(!gmod)
-			g_print("%s: couldn't open module %s at %s: %s\n",
-					pc_program_invocation_name, name, path, g_module_error());
-
 		g_free(path);
 	}
 
 	if(!gmod)
 	{
-		g_print("%s: module %s not found at any search-location\n",
-				pc_program_invocation_name, name);
+		g_print("%s: module %s not found at any search-location "
+				"or not usable\n", pc_program_invocation_name, name);
 	}
 	
 	g_free(fullname);
