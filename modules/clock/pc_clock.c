@@ -18,12 +18,17 @@
 #include <gtk/gtk.h>
 #include <pc_module.h>
 
-#define PC_TYPE_CLOCK			(pc_clock_get_type())
-#define PC_CLOCK(obj)			(G_TYPE_CHECK_INSTANCE_CAST((obj), PC_TYPE_CLOCK, PcClock))
-#define PC_CLOCK_CLASS(obj)		(G_TYPE_CHECK_CLASS_CAST((obj), PC_CLOCK, PcClockClass))
-#define PC_IS_CLOCK(obj)		(G_TYPE_CHECK_INSTANCE_TYPE((obj), PC_TYPE_CLOCK))
-#define PC_IS_CLOCK_CLASS(obj)	(G_TYPE_CHECK_CLASS_TYPE((obj), PC_TYPE_CLOCK))
-#define PC_CLOCK_GET_CLASS		(G_TYPE_INSTANCE_GET_CLASS((obj), PC_TYPE_CLOCK, PcClockClass))
+#define PC_TYPE_CLOCK	(pc_clock_get_type())
+#define PC_CLOCK(obj) \
+		(G_TYPE_CHECK_INSTANCE_CAST((obj), PC_TYPE_CLOCK, PcClock))
+#define PC_CLOCK_CLASS(obj) \
+		(G_TYPE_CHECK_CLASS_CAST((obj), PC_CLOCK, PcClockClass))
+#define PC_IS_CLOCK(obj) \
+		(G_TYPE_CHECK_INSTANCE_TYPE((obj), PC_TYPE_CLOCK))
+#define PC_IS_CLOCK_CLASS(obj) \
+		(G_TYPE_CHECK_CLASS_TYPE((obj), PC_TYPE_CLOCK))
+#define PC_CLOCK_GET_CLASS \
+		(G_TYPE_INSTANCE_GET_CLASS((obj), PC_TYPE_CLOCK, PcClockClass))
 
 typedef struct PcClock
 {
@@ -45,7 +50,8 @@ enum
 	PROP_LAST
 };
 
-#define PC_CLOCK_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE((obj), PC_TYPE_CLOCK, PcClockPrivate))
+#define PC_CLOCK_GET_PRIVATE(obj) \
+		(G_TYPE_INSTANCE_GET_PRIVATE((obj), PC_TYPE_CLOCK, PcClockPrivate))
 
 static gboolean pc_clock_update(gpointer data)
 {

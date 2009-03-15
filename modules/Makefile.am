@@ -1,1 +1,1 @@
-SUBDIRS = tasklist defaulttheme clock
+SUBDIRS = tasklist defaulttheme clock workspacename

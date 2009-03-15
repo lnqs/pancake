@@ -59,6 +59,11 @@ typedef struct PcStyleClass
  **/
 GType pc_style_get_type();
 
+/**
+ * @todo docs
+ **/
+void pc_style_apply(GtkStyle* style, GtkWidget* widget);
+
 G_END_DECLS
 
 #endif

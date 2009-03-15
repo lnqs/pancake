@@ -318,7 +318,6 @@ static void pc_panel_init(PcPanel* panel)
 	gtk_window_set_skip_pager_hint(GTK_WINDOW(panel), TRUE);
 	wnck_set_client_type(WNCK_CLIENT_TYPE_PAGER);
 
-
 	GdkScreen* screen = gtk_widget_get_screen(GTK_WIDGET(panel));
 	GdkColormap* colormap = gdk_screen_get_rgba_colormap(screen);
 

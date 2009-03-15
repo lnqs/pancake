@@ -16,6 +16,7 @@
  **/
 
 #include "pc_style.h"
+#include <gtk/gtk.h>
 
 G_DEFINE_TYPE(PcStyle, pc_style, GTK_TYPE_STYLE);
 
@@ -30,3 +31,17 @@ static void pc_style_init(PcStyle* style)
 {
 }
 
+static void pc_style_apply_callback(GtkWidget* widget, gpointer data)
+{
+	GtkStyle* style = GTK_STYLE(data);
+	gtk_widget_set_style(widget, style);
+
+	if(GTK_IS_CONTAINER(widget))
+		gtk_container_forall(GTK_CONTAINER(widget),
+				&pc_style_apply_callback, style);
+}
+
+void pc_style_apply(GtkStyle* style, GtkWidget* widget)
+{
+	pc_style_apply_callback(widget, style);
+}
