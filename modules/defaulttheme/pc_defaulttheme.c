@@ -18,7 +18,7 @@
 #include <gtk/gtk.h>
 #include <pc_module.h>
 
-#define PC_TYPE_DEFAULTTHEME_STYLE  (pc_defaulttheme_style_get_type())
+#define PC_TYPE_DEFAULTTHEME_STYLE (pc_defaulttheme_style_get_type())
 #define PC_DEFAULTTHEME_STYLE(object) \
 		(G_TYPE_CHECK_INSTANCE_CAST((object), \
 		PC_TYPE_DEFAULTTHEME_STYLE, PcDefaultthemeStyle))
@@ -38,15 +38,12 @@ typedef struct PcDefaultthemeStyle
 	PcStyle parent_instance;
 	gboolean rounded_top;
 	gboolean rounded_bottom;
+	gfloat bg_alpha;
 } PcDefaultthemeStyle;
 
 typedef struct PcDefaultthemeStyleClass
 {
 	PcStyleClass parent_class;
-	void (*draw_panel)(GtkStyle* style, GdkWindow* window,
-			GtkStateType state_type, GtkShadowType shadow_type,
-			GdkRectangle* area, GtkWidget* widget, const gchar* detail,
-			gint x, gint y, gint width, gint height);
 } PcDefaultthemeStyleClass;
 
 G_DEFINE_TYPE(PcDefaultthemeStyle, pc_defaulttheme_style, PC_TYPE_STYLE);
@@ -69,10 +66,11 @@ static void pc_defaulttheme_draw_panel(GtkStyle* style, GdkWindow* window,
 	cairo_fill(cr);
 
 	gint corner_size = h * 0.75f;
-	cairo_set_source_rgb(cr,
-			(float)style->bg[state_type].red   / 65535.0f,
-			(float)style->bg[state_type].green / 65535.0f,
-			(float)style->bg[state_type].blue  / 65535.0f);
+	cairo_set_source_rgba(cr,
+			(gfloat)style->bg[state_type].red   / 65535.0f,
+			(gfloat)style->bg[state_type].green / 65535.0f,
+			(gfloat)style->bg[state_type].blue  / 65535.0f,
+			self->bg_alpha);
 
 	cairo_move_to(cr, 0, corner_size);
 	if(self->rounded_top)
@@ -112,8 +110,17 @@ static void pc_defaulttheme_style_class_init(PcDefaultthemeStyleClass* class)
 
 static void pc_defaulttheme_style_init(PcDefaultthemeStyle* style)
 {
+	GTK_STYLE(style)->fg[GTK_STATE_NORMAL].red = 0.6f   * 65535;
+	GTK_STYLE(style)->fg[GTK_STATE_NORMAL].green = 0.6f * 65535;
+	GTK_STYLE(style)->fg[GTK_STATE_NORMAL].blue = 0.6f  * 65535;
+
+	GTK_STYLE(style)->bg[GTK_STATE_NORMAL].red = 0.2f   * 65535;
+	GTK_STYLE(style)->bg[GTK_STATE_NORMAL].green = 0.2f * 65535;
+	GTK_STYLE(style)->bg[GTK_STATE_NORMAL].blue = 0.2f  * 65535;
+
 	style->rounded_top = TRUE;
 	style->rounded_bottom = FALSE;
+	style->bg_alpha = 0.75;
 }
 
 static GtkStyle* pc_defaulttheme_style_new()

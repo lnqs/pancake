@@ -1,1 +1,1 @@
-SUBDIRS = defaulttheme clock
+SUBDIRS = tasklist defaulttheme clock

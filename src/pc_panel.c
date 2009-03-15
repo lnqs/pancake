@@ -299,7 +299,7 @@ static void pc_panel_class_init(PcPanelClass* class)
 					G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
 	g_object_class_install_property(obj_class, PROP_STRUT_ENABLED,
 			g_param_spec_boolean("strut-enabled",
-					"if the shall set a strut",
+					"if the panel shall set a strut",
 					"Holds if the panel shall set a strut. Default: TRUE",
 					TRUE,
 					G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
@@ -317,6 +317,15 @@ static void pc_panel_init(PcPanel* panel)
 	gtk_window_set_skip_taskbar_hint(GTK_WINDOW(panel), TRUE);
 	gtk_window_set_skip_pager_hint(GTK_WINDOW(panel), TRUE);
 	wnck_set_client_type(WNCK_CLIENT_TYPE_PAGER);
+
+
+	GdkScreen* screen = gtk_widget_get_screen(GTK_WIDGET(panel));
+	GdkColormap* colormap = gdk_screen_get_rgba_colormap(screen);
+
+	if(!colormap)
+		colormap = gdk_screen_get_rgb_colormap(screen);
+	
+	gtk_widget_set_colormap(GTK_WIDGET(panel), colormap);
 
 	g_signal_connect(G_OBJECT(panel), "configure-event",
 			G_CALLBACK(pc_panel_configure_event), NULL);

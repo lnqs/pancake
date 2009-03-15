@@ -32,10 +32,15 @@ gboolean pc_configparser_parse(
 	GtkWidget* hbox = gtk_hbox_new(FALSE, 3);
 	gtk_container_add(GTK_CONTAINER(panel), hbox);
 
+	PancakePlugin* tasklistmod = pc_modloader_load_plugin("tasklist");
+	GtkWidget* tasklist = tasklistmod->new_widget();
+	gtk_widget_set_style(tasklist, style);
+	gtk_box_pack_start(GTK_BOX(hbox), tasklist, TRUE, TRUE, 0);
+
 	PancakePlugin* clockmod = pc_modloader_load_plugin("clock");
 	GtkWidget* clock = clockmod->new_widget();
 	gtk_widget_set_style(clock, style);
-	gtk_container_add(GTK_CONTAINER(hbox), clock);
+	gtk_box_pack_end(GTK_BOX(hbox), clock, FALSE, FALSE, 0);
 
 	return TRUE;
 }
