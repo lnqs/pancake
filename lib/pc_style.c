@@ -20,7 +20,7 @@
 
 G_DEFINE_TYPE(PcStyle, pc_style, GTK_TYPE_STYLE);
 
-#define PC_STYLE_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), PC_TYPE_STYLE, PcStylePrivate))
+#define PC_STYLE_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE((obj), PC_TYPE_STYLE, PcStylePrivate))
 
 static void pc_style_class_init(PcStyleClass* klass)
 {
@@ -37,11 +37,14 @@ static void pc_style_apply_callback(GtkWidget* widget, gpointer data)
 	gtk_widget_set_style(widget, style);
 
 	if(GTK_IS_CONTAINER(widget))
+	{
 		gtk_container_forall(GTK_CONTAINER(widget),
 				&pc_style_apply_callback, style);
+	}
 }
 
 void pc_style_apply(GtkStyle* style, GtkWidget* widget)
 {
 	pc_style_apply_callback(widget, style);
 }
+

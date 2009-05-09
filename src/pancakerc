@@ -1,8 +1,0 @@
-[pancake]
-alignment = bottom
-width = 0.95
-height = 24
-strut_enabled = true
-#theme = pancake
-layout = clock
-

@@ -39,9 +39,7 @@ gboolean pc_configparser_parse(
 	GtkWidget* clock = clockmod->new_widget();
 	gtk_box_pack_end(GTK_BOX(hbox), clock, FALSE, FALSE, 0);
 
-	PancakeTheme* theme = pc_modloader_load_theme("defaulttheme");
-	GtkStyle* style = GTK_STYLE(theme->new_style());
-	pc_style_apply(style, GTK_WIDGET(panel));
+	pc_modloader_load_theme("defaulttheme");
 
 	return TRUE;
 }

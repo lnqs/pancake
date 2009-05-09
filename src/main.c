@@ -36,6 +36,15 @@ static void pc_i18n_init()
 	gtk_disable_setlocale();
 }
 
+gboolean pc_set_style_hook(GSignalInvocationHint* ihint, guint n_param_values,
+		const GValue* param_values, gpointer data)
+{
+	GtkWidget* widget = GTK_WIDGET(g_value_peek_pointer(param_values));
+	GtkStyle* style = GTK_STYLE(data);
+	gtk_widget_set_style(widget, style);
+	return TRUE;
+}
+
 int main(int argc, char** argv)
 {
 	pc_program_invocation_name = argv[0];
@@ -66,6 +75,14 @@ int main(int argc, char** argv)
 		pc_modloader_cleanup();
 		return 2;
 	}
+
+	GtkStyle* style = theme->new_style();
+	pc_style_apply(style, panel); /* sets style for everything created already
+	                                 recursivly */
+	g_signal_add_emission_hook(g_signal_lookup("realize", GTK_TYPE_WIDGET),
+			0, &pc_set_style_hook, style, NULL); /* will set style for
+			                                        everything that'll be 
+													created in future */
 
 	gtk_widget_show_all(panel);
 	gtk_main();

@@ -54,7 +54,6 @@ static void pc_tasklist_window_opened(WnckScreen* wscr,
 	PcTasklist* tasklist = PC_TASKLIST(data);
 
 	GtkWidget* task = pc_task_new(wwin);
-	pc_style_apply(gtk_widget_get_style(GTK_WIDGET(tasklist)), GTK_WIDGET(task));
 	gtk_box_pack_end(GTK_BOX(tasklist), task, FALSE, TRUE, 0);
 }
 
