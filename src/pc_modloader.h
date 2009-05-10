@@ -44,22 +44,42 @@ gboolean pc_modloader_load_module(const gchar* name);
 void pc_modloader_cleanup();
 
 /**
- * @todo docs
+ * @brief Returns the total number of registered widget-"providers"
+ *
+ * this functions returns the number of different widgets registered
+ * by modules. These are not widgets acually created, but widgets that
+ * can be instantiated any time.
+ *
+ * @return the number of instantiable widgets
  **/
 gint pc_modloader_get_num_widgets();
 
 /**
- * @todo docs
+ * @brief Returns the total number of registered theme-"providers"
+ *
+ * this functions returns the number of different themes registered
+ * by modules. These are not themes acually created, but themes that
+ * can be instantiated any time.
+ *
+ * @return the number of instantiable theme
  **/
 gint pc_modloader_get_num_themes();
 
 /**
- * @todo docs
+ * @brief Returns the list of widgets
+ *
+ * this function returns the internal list of instantiable widget-information
+ *
+ * @return the list of instantiable widgets
  **/
 const GList* pc_modloader_get_widgets();
 
 /**
- * @todo docs
+ * @brief Returns the list of themes
+ *
+ * this function returns the internal list of instantiable theme-information
+ *
+ * @return the list of instantiable themes
  **/
 const GList* pc_modloader_get_themes();
 

@@ -18,6 +18,8 @@
 #ifndef PC_PANEL_H
 #define PC_PANEL_H
 
+/* TODO: Add options for the optional stuff */
+
 #include <gtk/gtk.h>
 #include <pc_types.h>
 
@@ -86,17 +88,31 @@ void pc_panel_set_align(PcPanel* panel, PcAlignment align);
 void pc_panel_set_strut_enabled(PcPanel* panel, gboolean enabled);
 
 /**
- * @todo docs
+ * @brief Sets the padding between border's and widgets
+ *
+ * this function sets the padding between the left and right border of
+ * the panel and the widgets within. It is only tought to be called by
+ * main() with a value gotten from the style.
+ *
+ * @param panel panel to set the padding to
+ * @param padding the padding in pixels
  **/
 void pc_panel_set_border_padding(PcPanel* panel, guint padding);
 
 /**
- * @todo docs
+ * @brief Returns the box-child
+ *
+ * this function returns the box-child new widgets should be added to
+ *
+ * @param panel the panel to return the box for
+ * @return the box
  **/
 GtkBox* pc_panel_get_box(PcPanel* panel);
 
 /**
- * @todo docs
+ * @brief Returns the GType of PcPanel
+ *
+ * @return the GType
  **/
 GType pc_panel_get_type();
 

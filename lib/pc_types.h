@@ -19,7 +19,7 @@
 #define PC_TYPES_H
 
 /**
- * @todo docs
+ * @brief enum to display variuos alignments on screen
  **/
 typedef enum PcAlignment
 {

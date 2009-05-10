@@ -19,27 +19,46 @@
 #include <confuse.h>
 
 /**
- * @todo docs
+ * @brief struct providing information about a widget provided by a module
+ *
+ * structs of this type are given to the application by modules with the
+ * register_widget-callback to register new widgets.
  **/
 typedef struct PcWidgetInfo
 {
-	const gchar* name;
+	const gchar* name; //!< unique name of the widget-type
+
+	//! pointer to a function suitable to create an instance of the widget
 	GtkWidget* (*instantiate)(cfg_t* config);
+
+	//! libconfuse-conform options that may be set for the widget
 	cfg_opt_t* options;
 } PcWidgetInfo;
 
 /**
- * @todo docs
+ * @brief struct providing information about a theme provided by a module
+ *
+ * structs of this type are given to the application by modules with the
+ * register_theme-callback to register new themes.
  **/
 typedef struct PcThemeInfo
 {
-	const gchar* name;
+	const gchar* name; //!< unique name of the theme-type
+
+	//! pointer to a function suitable to create an instance of the
+	//! theme's style
 	GtkStyle* (*instantiate)(cfg_t* config);
+
+	//! libconfuse-conform options that may be set for the theme
 	cfg_opt_t* options;
 } PcThemeInfo;
 
 /**
- * @todo docs
+ * @brief struct of callbacks given to modules
+ *
+ * when a module is initialized, an instance of this struct is given to it,
+ * to provide the possibility to call-back the application to register widgets
+ * and themes
  **/
 typedef struct PcModuleCallbacks
 {

@@ -124,7 +124,7 @@ static void pc_panel_update_strut(PcPanel* panel)
 	
 		gulong strut[12] = { 0, };
 
-		// TODO: Add partitial strut
+		/* TODO: Add partitial strut */
 		if(priv->align == PC_ALIGN_BOTTOM)
 			strut[STRUT_BOTTOM] = h;
 		else

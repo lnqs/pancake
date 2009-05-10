@@ -35,7 +35,7 @@ G_BEGIN_DECLS
 		(G_TYPE_INSTANCE_GET_CLASS((obj), PC_TYPE_STYLE, PcStyleClass))
 
 /**
- * @todo docs
+ * @brief pancake style
  **/
 typedef struct PcStyle
 {
@@ -45,7 +45,7 @@ typedef struct PcStyle
 } PcStyle;
 
 /**
- * @todo docs
+ * @brief pancake style class
  **/
 typedef struct PcStyleClass
 {
@@ -57,22 +57,42 @@ typedef struct PcStyleClass
 } PcStyleClass;
 
 /**
- * @todo docs
+ * @brief Applies a style recursivly
+ *
+ * This function sets the given style to the given widget and recursivly
+ * to all child-widgets
+ *
+ * @param style style to set
+ * @param widget the widget to set the style to
  **/
 void pc_style_apply(GtkStyle* style, GtkWidget* widget);
 
 /**
- * @todo docs
+ * @brief Returns the desired widget padding
+ * 
+ * this function returns the padding the style want's to have between
+ * the panels's idgets
+ *
+ * @param style style to return the value for
+ * @return the padding in pixels
  **/
 guint pc_style_get_widget_padding(GtkStyle* style);
 
 /**
- * @todo docs
+ * @brief Returns the desired border-padding
+ * 
+ * this function returns the padding the style want's to have between
+ * the panels's left and right border's and it's widgets
+ *
+ * @param style style to return the value for
+ * @return the padding in pixels
  **/
 guint pc_style_get_border_padding(GtkStyle* style);
 
 /**
- * @todo docs
+ * @brief Returns the GType of PcPanel
+ *
+ * @return PcPanel's GType
  **/
 GType pc_style_get_type();
 

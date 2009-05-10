@@ -24,7 +24,8 @@
  * It's only valid after pc_commandline_parse has been called */
 extern const gchar* pc_program_invocation_name;
 
-/* todo: docs */
+/* the currently active theme. This should be considered as read-only,
+   unless you're about to change configfile-parsing */
 extern GtkStyle* pc_theme;
 
 #endif
