@@ -24,6 +24,46 @@
 #include <pc_style.h>
 #include "pc_modloader.h"
 
+static gint pc_configparser_validate_height(cfg_t* cfg, cfg_opt_t* opt)
+{
+	gint val = cfg_opt_getnint(opt, 0);
+	if(val < 0)
+	{
+		cfg_error(cfg, "height must be at least 0");
+        return -1;
+	}
+
+	return 0;
+}
+
+static gint pc_configparser_validate_width(cfg_t* cfg, cfg_opt_t* opt)
+{
+	gfloat val = cfg_opt_getnfloat(opt, 0);
+	if(val < 0.0f || val > 1.0f)
+	{
+		cfg_error(cfg, "width must be between 0.0 and 1.0");
+        return -1;
+	}
+
+	return 0;
+}
+
+static int pc_configparser_parse_align(
+		cfg_t* cfg, cfg_opt_t* opt, const char* value, void* result)
+{
+	if(!g_strcmp0(value, "top"))
+		*(long int *)result = PC_ALIGN_TOP;
+	else if(!g_strcmp0(value, "bottom"))
+		*(long int*)result = PC_ALIGN_BOTTOM;
+	else
+	{
+		cfg_error(cfg, "invalid value for option %s: %s", opt->name, value);
+		return -1;
+	}
+	
+	return 0;
+}
+
 static gchar* pc_configparser_determine_filename(
 		const PcCommandlineOpts* cmdline_opts)
 {
@@ -98,12 +138,18 @@ error:
 static cfg_opt_t* pc_configparser_build_optlist()
 {
 	cfg_opt_t* opts = g_new(cfg_opt_t, pc_modloader_get_num_widgets() +
-			pc_modloader_get_num_themes() + 4);
+			pc_modloader_get_num_themes() + 8);
 
 	gint i = 0;
 	opts[i++] = (cfg_opt_t)CFG_STR_LIST("modules", "", CFGF_NONE);
 	opts[i++] = (cfg_opt_t)CFG_STR("theme", NULL, CFGF_NONE);
 	opts[i++] = (cfg_opt_t)CFG_STR_LIST("widgets", "", CFGF_NONE);
+
+	opts[i++] = (cfg_opt_t)CFG_INT("height", 24, CFGF_NONE);
+	opts[i++] = (cfg_opt_t)CFG_FLOAT("width", 0.95f, CFGF_NONE);
+	opts[i++] = (cfg_opt_t)CFG_INT_CB("align", 2, CFGF_NONE,
+			&pc_configparser_parse_align);
+	opts[i++] = (cfg_opt_t)CFG_BOOL("strut", 1, CFGF_NONE);
 
 	const GList* cur = pc_modloader_get_widgets();
 	do
@@ -242,8 +288,12 @@ gboolean pc_configparser_parse(
 
 	/* time to do the real parsing */
 	cfg_opt_t* opts = pc_configparser_build_optlist();
-	
+		
 	cfg_t* cfg = cfg_init(opts, CFGF_NOCASE);
+
+	cfg_set_validate_func(cfg, "height", &pc_configparser_validate_height);
+	cfg_set_validate_func(cfg, "width", &pc_configparser_validate_width);
+
 	gint ret = cfg_parse(cfg, filename);
 	if(ret == CFG_FILE_ERROR)
 	{
@@ -259,6 +309,11 @@ gboolean pc_configparser_parse(
 
 	if(!pc_modloader_load_widgets(cfg, panel))
 		goto error_config;
+	
+	pc_panel_set_width(panel, cfg_getfloat(cfg, "width"));
+	pc_panel_set_height(panel, cfg_getint(cfg, "height"));
+	pc_panel_set_align(panel, cfg_getint(cfg, "align"));
+	pc_panel_set_strut_enabled(panel, cfg_getbool(cfg, "strut"));
 
 	g_free(filename);
 

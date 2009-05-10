@@ -18,8 +18,6 @@
 #ifndef PC_PANEL_H
 #define PC_PANEL_H
 
-/* TODO: Add options for the optional stuff */
-
 #include <gtk/gtk.h>
 #include <pc_types.h>
 
