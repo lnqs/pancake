@@ -103,22 +103,11 @@ static void pc_defaulttheme_draw_panel(GtkStyle* style, GdkWindow* window,
 	cairo_destroy(cr);
 }
 
-static void pc_defaulttheme_draw_box(GtkStyle* style, GdkWindow* window,
-		GtkStateType state_type, GtkShadowType shadow_type,
-		GdkRectangle* area, GtkWidget* widget, const gchar* detail,
-		gint x, gint y, gint width, gint height)
-{
-	gtk_paint_flat_box(style, window, state_type, shadow_type, area,
-			widget, detail, x, y, width, height);
-}
-
 static void pc_defaulttheme_style_class_init(PcDefaultthemeStyleClass* class)
 {
 	PcStyleClass* pc_style_class = PC_STYLE_CLASS(class);
-	GtkStyleClass* gtk_style_class = GTK_STYLE_CLASS(class);
 
 	pc_style_class->draw_panel = &pc_defaulttheme_draw_panel;
-	gtk_style_class->draw_box = &pc_defaulttheme_draw_box;
 }
 
 static void pc_defaulttheme_style_init(PcDefaultthemeStyle* style)
