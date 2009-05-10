@@ -16,31 +16,261 @@
  **/
 
 #include "pc_configparser.h"
-#include <stdlib.h>
+#include <errno.h>
+#include <string.h>
+#include <confuse.h>
+#include <pc_misc.h>
 #include <pc_module.h>
+#include <pc_style.h>
 #include "pc_modloader.h"
+
+static gchar* pc_configparser_determine_filename(
+		const PcCommandlineOpts* cmdline_opts)
+{
+	if(cmdline_opts->config_path)
+		return g_strdup(cmdline_opts->config_path);
+	else
+		return g_strjoin(G_DIR_SEPARATOR_S,
+				g_get_home_dir(), ".pancakerc", NULL);
+}
+
+static gboolean pc_configparser_load_modules(const gchar* filename)
+{
+	/* This sucks a bit, since the
+	   error-checking of libconfuse forces us to pre-parse the config, but
+	   I don't see a better way */
+	static cfg_opt_t firstpass_opts[] = {
+		CFG_STR_LIST("modules", "", CFGF_NONE),
+		CFG_END()
+	};
+
+	gchar buf[1024];
+	gchar* modulesline = NULL;
+	FILE* file = fopen(filename, "r");
+	if(!file)
+	{
+		g_print("%s: failed to open %s: %s\n",
+				pc_program_invocation_name, filename, strerror(errno));
+		return FALSE;
+	}
+
+	while(fgets(buf, sizeof(buf), file))
+	{
+		if(!strncmp("modules", buf, strlen("modules")))
+		{
+			modulesline = g_strdup(buf);
+			break;
+		}
+	}
+
+	if(!modulesline)
+		modulesline = g_strdup("");
+
+	fclose(file);
+
+	/* pass it to confuse */
+	cfg_t* cfg = cfg_init(firstpass_opts, CFGF_NOCASE);
+	int ret = cfg_parse_buf(cfg, modulesline);
+	if(ret == CFG_FILE_ERROR) /* unknown options will be ignored this pass */
+	{
+		g_print("%s: failed to open %s: %s\n",
+				pc_program_invocation_name, filename, strerror(errno));
+		goto error;
+	}
+
+	for(int i = 0; i < cfg_size(cfg, "modules"); i++)
+	{
+		if(!pc_modloader_load_module(cfg_getnstr(cfg, "modules", i)))
+			goto error;
+	}
+
+	cfg_free(cfg);
+	g_free(modulesline);
+
+	return TRUE;
+
+error:
+	cfg_free(cfg);
+	g_free(modulesline);
+	return FALSE;
+}
+
+static cfg_opt_t* pc_configparser_build_optlist()
+{
+	cfg_opt_t* opts = g_new(cfg_opt_t, pc_modloader_get_num_widgets() +
+			pc_modloader_get_num_themes() + 4);
+
+	gint i = 0;
+	opts[i++] = (cfg_opt_t)CFG_STR_LIST("modules", "", CFGF_NONE);
+	opts[i++] = (cfg_opt_t)CFG_STR("theme", NULL, CFGF_NONE);
+	opts[i++] = (cfg_opt_t)CFG_STR_LIST("widgets", "", CFGF_NONE);
+
+	const GList* cur = pc_modloader_get_widgets();
+	do
+	{
+		PcWidgetInfo* info = cur->data;
+		opts[i++] = (cfg_opt_t)CFG_SEC((gchar*)info->name,
+				info->options, CFGF_MULTI | CFGF_TITLE);
+	} while((cur = g_list_next(cur)));
+
+	cur = pc_modloader_get_themes();
+	do
+	{
+		PcWidgetInfo* info = cur->data;
+		opts[i++] = (cfg_opt_t)CFG_SEC((gchar*)info->name,
+				info->options, CFGF_MULTI | CFGF_TITLE);
+	} while((cur = g_list_next(cur)));
+
+	opts[i++] = (cfg_opt_t)CFG_END();
+
+	return opts;
+}
+
+static gboolean pc_modloader_load_theme(cfg_t* config)
+{
+	const gchar* theme = cfg_getstr(config, "theme");
+	if(!theme)
+	{
+		g_print("%s: no theme defined\n", pc_program_invocation_name);
+		return FALSE;
+	}
+
+	cfg_t* section = NULL;
+	PcThemeInfo* info = NULL;
+
+	/* find the section for our active theme */
+	const GList* cur = pc_modloader_get_themes();
+	do
+	{
+		info = cur->data;
+		for(gint i = 0; i < cfg_size(config, info->name); i++)
+		{
+			section = cfg_getnsec(config, info->name, i);
+
+			if(!g_strcmp0(cfg_title(section), theme))
+				break;
+		}
+
+	} while((cur = g_list_next(cur)));
+
+	if(!section || g_strcmp0(cfg_title(section), theme))
+	{
+		g_print("%s: theme %s isn't defined\n",
+				pc_program_invocation_name, theme);
+		return FALSE;
+	}
+
+	/* instantiate it */
+	GtkStyle* style = info->instantiate(section);
+	if(!style)
+	{
+		g_print("%s: failed to instantiate theme %s\n",
+				pc_program_invocation_name, info->name);
+		return FALSE;
+	}
+
+	pc_theme = style;
+
+	return TRUE;
+}
+
+static gboolean pc_modloader_load_widgets(cfg_t* config, PcPanel* panel)
+{
+	for(int i = 0; i < cfg_size(config, "widgets"); i++)
+	{
+		const gchar* widget = cfg_getnstr(config, "widgets", i);
+		gboolean expand = FALSE;
+		cfg_t* section = NULL;
+		PcWidgetInfo* info = NULL;
+
+		/* options given for this widget? */
+		if(!strncmp(widget, "expand:", strlen("expand")))
+		{
+			expand = TRUE;
+			widget += strlen("expand:");
+		}
+
+		/* find the section for our current widget */
+		const GList* cur = pc_modloader_get_widgets();
+		do
+		{
+			info = cur->data;
+			for(gint j = 0; j < cfg_size(config, info->name); j++)
+			{
+				section = cfg_getnsec(config, info->name, j);
+
+				if(!g_strcmp0(cfg_title(section), widget))
+					break;
+			}
+
+		} while((cur = g_list_next(cur)));
+
+		if(!section || g_strcmp0(cfg_title(section), widget))
+		{
+			g_print("%s: widget %s isn't defined\n",
+					pc_program_invocation_name, widget);
+			return FALSE;
+		}
+
+		/* We've got it, let's create it */
+		GtkWidget* w = info->instantiate(section);
+		if(!w)
+		{
+			g_print("%s: failed to create widget %s\n",
+					pc_program_invocation_name, info->name);
+			return FALSE;
+		}
+
+		gtk_box_pack_end(pc_panel_get_box(panel),
+				w, expand, FALSE, pc_style_get_widget_padding(pc_theme));
+	}
+	
+	return TRUE;
+}
 
 gboolean pc_configparser_parse(
 		PcPanel* panel, const PcCommandlineOpts* cmdline_opts)
 {
-	/* This is only for testing -- real configfileparsing has to be added */
-	GtkWidget* hbox = gtk_hbox_new(FALSE, 3);
-	gtk_container_add(GTK_CONTAINER(panel), hbox);
+	gchar* filename = pc_configparser_determine_filename(cmdline_opts);
+	
+	/* first pass -- just load the modules. */
+	if(!pc_configparser_load_modules(filename))
+	{
+		g_free(filename);
+		return FALSE;
+	}
 
-	PancakePlugin* workspacenamemod = pc_modloader_load_plugin("workspacename");
-	GtkWidget* workspacename = workspacenamemod->new_widget();
-	gtk_box_pack_start(GTK_BOX(hbox), workspacename, FALSE, FALSE, 0);
+	/* time to do the real parsing */
+	cfg_opt_t* opts = pc_configparser_build_optlist();
+	
+	cfg_t* cfg = cfg_init(opts, CFGF_NOCASE);
+	gint ret = cfg_parse(cfg, filename);
+	if(ret == CFG_FILE_ERROR)
+	{
+		g_print("%s: failed to open %s: %s\n",
+				pc_program_invocation_name, filename, strerror(errno));
+		goto error_opts;
+	}
+	else if(ret == CFG_PARSE_ERROR)
+		goto error_opts;
+	
+	if(!pc_modloader_load_theme(cfg))
+		goto error_config;
 
-	PancakePlugin* tasklistmod = pc_modloader_load_plugin("tasklist");
-	GtkWidget* tasklist = tasklistmod->new_widget();
-	gtk_box_pack_start(GTK_BOX(hbox), tasklist, TRUE, TRUE, 0);
+	if(!pc_modloader_load_widgets(cfg, panel))
+		goto error_config;
 
-	PancakePlugin* clockmod = pc_modloader_load_plugin("clock");
-	GtkWidget* clock = clockmod->new_widget();
-	gtk_box_pack_end(GTK_BOX(hbox), clock, FALSE, FALSE, 0);
-
-	pc_modloader_load_theme("defaulttheme");
+	g_free(filename);
 
 	return TRUE;
+
+error_config:
+	cfg_free(cfg);
+
+error_opts:
+	g_free(opts);
+	g_free(filename);
+
+	return FALSE;
 }
 

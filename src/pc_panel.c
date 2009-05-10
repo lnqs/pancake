@@ -52,6 +52,8 @@ enum
 
 typedef struct PcPanelPrivate
 {
+	GtkWidget* box;
+	GtkWidget* alignment;
 	PcAlignment align;
 	gfloat width;
 	gint height;
@@ -309,6 +311,8 @@ static void pc_panel_class_init(PcPanelClass* class)
 
 static void pc_panel_init(PcPanel* panel)
 {
+	PcPanelPrivate* private = PC_PANEL_GET_PRIVATE(panel);
+	
 	gtk_window_stick(GTK_WINDOW(panel));
 	gtk_window_set_type_hint(GTK_WINDOW(panel), GDK_WINDOW_TYPE_HINT_DOCK);
 	gtk_widget_set_app_paintable(GTK_WIDGET(panel), TRUE);
@@ -328,6 +332,11 @@ static void pc_panel_init(PcPanel* panel)
 
 	g_signal_connect(G_OBJECT(panel), "configure-event",
 			G_CALLBACK(pc_panel_configure_event), NULL);
+
+	private->alignment = gtk_alignment_new(0.5f, 0.5f, 1.0f, 1.0f);
+	private->box = gtk_hbox_new(FALSE, 3);
+	gtk_container_add(GTK_CONTAINER(panel), private->alignment);
+	gtk_container_add(GTK_CONTAINER(private->alignment), private->box);
 }
 
 GtkWidget* pc_panel_new()
@@ -362,48 +371,14 @@ void pc_panel_set_strut_enabled(PcPanel* panel, gboolean enabled)
 	pc_panel_update_strut(panel);
 }
 
-gboolean pc_panel_set_option(
-		PcPanel* panel, const gchar* key, const gchar* value)
+GtkBox* pc_panel_get_box(PcPanel* panel)
 {
-	if(!g_strcmp0(key, "alignment"))
-	{
-		PcAlignment align;
-		if(!pc_optionconv_alignment(value, &align))
-			return FALSE;
+	return GTK_BOX(PC_PANEL_GET_PRIVATE(panel)->box);
+}
 
-		pc_panel_set_align(panel, align);
-	}
-	else if(!g_strcmp0(key, "width"))
-	{
-		gfloat width;
-		if(!pc_optionconv_float(value, &width))
-			return FALSE;
-
-		pc_panel_set_width(panel, width);
-	}
-	else if(!g_strcmp0(key, "height"))
-	{
-		gint height;
-		if(!pc_optionconv_int(value, &height))
-			return FALSE;
-
-		pc_panel_set_height(panel, height);
-	}
-	else if(!g_strcmp0(key, "strut_enabled"))
-	{
-		gboolean enabled;
-		if(!pc_optionconv_bool(value, &enabled))
-			return TRUE;
-
-		pc_panel_set_strut_enabled(panel, enabled);
-	}
-	else
-	{
-		g_print("%s: invalid panel-option %s\n",
-				pc_program_invocation_name, key);
-		return FALSE;
-	}
-
-	return TRUE;
+void pc_panel_set_border_padding(PcPanel* panel, guint padding)
+{
+	GtkWidget* alignment = PC_PANEL_GET_PRIVATE(panel)->alignment;
+	gtk_alignment_set_padding(GTK_ALIGNMENT(alignment), 0, 0, padding, padding);
 }
 

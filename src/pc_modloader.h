@@ -19,7 +19,6 @@
 #define PC_MODLOADER_H
 
 #include <gtk/gtk.h>
-#include <pc_module.h>
 #include "pc_commandline.h"
 #include "pc_panel.h"
 
@@ -32,40 +31,37 @@
 gboolean pc_modloader_init(const PcCommandlineOpts* cmdline_opts);
 
 /**
- * @brief Loads a plugin 
+ * @brief Loads a module
  *
  * @param name the name of the module to load
- * @return the newly loaded module, or NULL if an error occured
+ * @return TRUE on success, FALSE otherwise
  **/
-PancakePlugin* pc_modloader_load_plugin(const gchar* name);
-
-/**
- * @brief Loads a theme 
- *
- * @param name the name of the module to load
- * @return the newly loaded module, or NULL if an error occured
- **/
-PancakeTheme* pc_modloader_load_theme(const gchar* name);
-
-/**
- * @brief Returns a plugin by it's name
- *
- * @param name the name of the module to search for
- * @return pointer to the module or NULL if no such module exists
- **/
-PancakePlugin* pc_modloader_get_plugin(const gchar* name);
-
-/**
- * @brief Returns the theme-module
- *
- * @return the theme-module
- **/
-PancakeTheme* pc_modloader_get_theme();
+gboolean pc_modloader_load_module(const gchar* name);
 
 /**
  * @brief Cleans up the module-subsystem
  **/
 void pc_modloader_cleanup();
+
+/**
+ * @todo docs
+ **/
+gint pc_modloader_get_num_widgets();
+
+/**
+ * @todo docs
+ **/
+gint pc_modloader_get_num_themes();
+
+/**
+ * @todo docs
+ **/
+const GList* pc_modloader_get_widgets();
+
+/**
+ * @todo docs
+ **/
+const GList* pc_modloader_get_themes();
 
 #endif
 

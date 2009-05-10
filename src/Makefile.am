@@ -1,7 +1,8 @@
 INCLUDES = \
 	-I$(top_srcdir)/lib \
 	$(gtk_CFLAGS) \
-	$(libwnck_CFLAGS)
+	$(libwnck_CFLAGS) \
+	$(libconfuse_CFLAGS)
 
 bin_PROGRAMS = pancake
 
@@ -26,5 +27,6 @@ pancake_CFLAGS = \
 pancake_LDFLAGS = \
 	$(gtk_LIBS) \
 	$(libwnck_LIBS) \
+	$(libconfuse_LIBS) \
 	$(top_srcdir)/lib/libpancake.la
 

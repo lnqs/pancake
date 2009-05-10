@@ -23,10 +23,16 @@
 #include "pc_modloader.h"
 #include "pc_configparser.h"
 #include "pc_panel.h"
+#include "pc_style.h"
 
 /* TODO: unify logging with the glib-logging-functions */
+/* TODO: Test external building of modules */
+/* TODO: static code analysis? */
+/* TODO: valgrind? */
+/* TODO: Add help for the modules */
 
 const gchar* pc_program_invocation_name;
+GtkStyle* pc_theme = NULL;
 
 static void pc_i18n_init()
 {
@@ -68,21 +74,21 @@ int main(int argc, char** argv)
 		return 2;
 	}
 
-	PancakeTheme* theme = pc_modloader_get_theme();
-	if(!theme)
+	if(!pc_theme)
 	{
 		g_print("%s: No theme loaded\n", pc_program_invocation_name);
 		pc_modloader_cleanup();
 		return 2;
 	}
 
-	GtkStyle* style = theme->new_style();
-	pc_style_apply(style, panel); /* sets style for everything created already
-	                                 recursivly */
+	pc_style_apply(pc_theme, panel); /* sets style for everything created
+									    already recursivly */
 	g_signal_add_emission_hook(g_signal_lookup("realize", GTK_TYPE_WIDGET),
-			0, &pc_set_style_hook, style, NULL); /* will set style for
-			                                        everything that'll be 
-													created in future */
+			0, &pc_set_style_hook, pc_theme, NULL); /* will set style for
+													   everything that'll be 
+													   created in future */
+	pc_panel_set_border_padding(PC_PANEL(panel),
+			pc_style_get_border_padding(pc_theme));
 
 	gtk_widget_show_all(panel);
 	gtk_main();

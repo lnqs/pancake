@@ -40,6 +40,8 @@ G_BEGIN_DECLS
 typedef struct PcStyle
 {
 	GtkStyle parent_instance;
+	guint widget_padding;
+	guint border_padding;
 } PcStyle;
 
 /**
@@ -58,6 +60,16 @@ typedef struct PcStyleClass
  * @todo docs
  **/
 void pc_style_apply(GtkStyle* style, GtkWidget* widget);
+
+/**
+ * @todo docs
+ **/
+guint pc_style_get_widget_padding(GtkStyle* style);
+
+/**
+ * @todo docs
+ **/
+guint pc_style_get_border_padding(GtkStyle* style);
 
 /**
  * @todo docs

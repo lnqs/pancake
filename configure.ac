@@ -21,11 +21,17 @@ PKG_CHECK_MODULES(gtk, [gtk+-2.0 >= 2.12.0],,
 PKG_CHECK_MODULES(libwnck, [libwnck-1.0 >= 2.22.0],,
 	AC_MSG_ERROR([libwnck-1.0 >= 2.20.0 not found!]))
 
+# libconfuse
+PKG_CHECK_MODULES(libconfuse, [libconfuse >= 2.6],,
+	AC_MSG_ERROR([libconfuse >= 2.6 not found!]))
+
 ### Write Makefiles
 AC_SUBST(gtk_CFLAGS)
 AC_SUBST(gtk_LIBS)
 AC_SUBST(libwnck_CFLAGS)
 AC_SUBST(libwnck_LIBS)
+AC_SUBST(libconfuse_CFLAGS)
+AC_SUBST(libconfuse_LIBS)
 
 AC_CONFIG_FILES([ \
 	Makefile \

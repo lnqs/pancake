@@ -86,14 +86,19 @@ void pc_panel_set_align(PcPanel* panel, PcAlignment align);
 void pc_panel_set_strut_enabled(PcPanel* panel, gboolean enabled);
 
 /**
- * @brief Sets an panel-option by a key
- *
- * @param key the option's key
- * @param value the option's value
- * @return TRUE on success, FALSE otherwise
+ * @todo docs
  **/
-gboolean pc_panel_set_option(
-		PcPanel* panel, const gchar* key, const gchar* value);
+void pc_panel_set_border_padding(PcPanel* panel, guint padding);
+
+/**
+ * @todo docs
+ **/
+GtkBox* pc_panel_get_box(PcPanel* panel);
+
+/**
+ * @todo docs
+ **/
+GType pc_panel_get_type();
 
 G_END_DECLS
 

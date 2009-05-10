@@ -17,6 +17,7 @@
 
 #include <gtk/gtk.h>
 #include <pc_module.h>
+#include <pc_style.h>
 
 #define PC_TYPE_DEFAULTTHEME_STYLE (pc_defaulttheme_style_get_type())
 #define PC_DEFAULTTHEME_STYLE(object) \
@@ -156,12 +157,25 @@ static GtkStyle* pc_defaulttheme_style_new()
 	return GTK_STYLE(g_object_new(PC_TYPE_DEFAULTTHEME_STYLE, NULL));
 }
 
-static PancakeTheme pc_defaulttheme = {
-	.name       = "defaulttheme",
-	.init       = NULL,
-	.fini       = NULL,
-	.new_style  = &pc_defaulttheme_style_new
+static GtkStyle* pc_defaulttheme_instantiate(cfg_t* options)
+{
+	return pc_defaulttheme_style_new();
+}
+
+/* TODO: Add options to change colors, rounded edges and alpha */
+static cfg_opt_t pc_defaulttheme_options[] = {
+	CFG_END()
 };
 
-PANCAKE_THEME(pc_defaulttheme)
+static const PcThemeInfo pc_defaulttheme_info = {
+	.name = "defaulttheme",
+	.instantiate = &pc_defaulttheme_instantiate,
+	.options = pc_defaulttheme_options
+};
+
+gboolean pc_module_init(const PcModuleCallbacks* callbacks)
+{
+	callbacks->register_theme(&pc_defaulttheme_info);
+	return TRUE;
+}
 

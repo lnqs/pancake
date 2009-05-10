@@ -16,11 +16,24 @@
  **/
 
 #include "pc_modloader.h"
+#include <pc_module.h>
 #include "pc_commandline.h"
 
 static GList* plugins = NULL;
-static PancakeTheme* theme = NULL;
 static const gchar* modpath_arg = NULL;
+
+static GList* widgets = NULL;
+static GList* themes = NULL;
+
+static void pc_modloader_register_widget(const PcWidgetInfo* info)
+{
+	widgets = g_list_append(widgets, (PcWidgetInfo*)info);
+}
+
+static void pc_modloader_register_theme(const PcThemeInfo* info)
+{
+	themes = g_list_append(themes, (PcThemeInfo*)info);
+}
 
 static GModule* pc_modload_open_modfile(const gchar* name)
 {
@@ -66,113 +79,49 @@ gboolean pc_modloader_init(const PcCommandlineOpts* cmdline_opts)
 	return TRUE;
 }
 
-PancakePlugin* pc_modloader_load_plugin(const gchar* name)
+gboolean pc_modloader_load_module(const gchar* name)
 {
+	static const PcModuleCallbacks mod_callbacks = {
+		.register_widget = &pc_modloader_register_widget,
+		.register_theme = &pc_modloader_register_theme
+	};
+
 	GModule* gmod = pc_modload_open_modfile(name);
 	if(!gmod)
-		return NULL;
+		return FALSE;
 
-	PancakePlugin* (*get_plugininfo_func)();
-	if(!g_module_symbol(gmod, "_pc_mod_get_plugininfo",
-			(gpointer*)&get_plugininfo_func))
+	gboolean (*module_init_func)(const PcModuleCallbacks*);
+	if(!g_module_symbol(gmod, "pc_module_init",
+			(gpointer*)&module_init_func))
 	{
-		g_print("%s\n%s: failed to initialize plugin %s\n",
+		g_print("%s\n%s: failed to initialize module %s\n",
 				g_module_error(), pc_program_invocation_name, name);
 		goto error;
 	}
 
-	PancakePlugin* modinfo;
-	if(!get_plugininfo_func || !(modinfo = (*get_plugininfo_func)()))
+	if(!module_init_func)
 	{
-		g_print("%s: module %s isn't a pancake-plugin\n",
+		g_print("%s: %s isn't a pancake-module\n",
 				pc_program_invocation_name, name);
 		goto error;
 	}
 
-	if(modinfo->init && !(*modinfo->init)())
+	if(!(*module_init_func)(&mod_callbacks))
 	{
-		g_print("%s: initialisation of module %s failed\n",
+		g_print("%s: module %s failed to initialise\n",
 				pc_program_invocation_name, name);
 		goto error;
 	}
-	
-	plugins = g_list_append(plugins, modinfo);
-	modinfo->gmodule = gmod;
 
-	return modinfo;
+	plugins = g_list_append(plugins, gmod);
+
+	return TRUE;
 
 error:
 	if(gmod && !g_module_close(gmod))
 		g_print("%s: failed to close module %s\n",
 				pc_program_invocation_name, name);
-	return NULL;
-}
-
-PancakeTheme* pc_modloader_load_theme(const gchar* name)
-{
-	if(theme)
-	{
-		g_print("%s: attempt to load theme %s, but there's already "
-				"one registered\n", pc_program_invocation_name, name);
-		return NULL;
-	}
-
-	GModule* gmod = pc_modload_open_modfile(name);
-	if(!gmod)
-		return NULL;
-	
-	PancakeTheme* (*get_themeinfo_func)();
-	if(!g_module_symbol(gmod, "_pc_mod_get_themeinfo",
-			(gpointer*)&get_themeinfo_func))
-	{
-		g_print("%s\n%s: failed to initialize theme %s\n",
-				g_module_error(), pc_program_invocation_name, name);
-		goto error;
-	}
-
-	PancakeTheme* modinfo;
-	if(!get_themeinfo_func || !(modinfo = (*get_themeinfo_func)()))
-	{
-		g_print("%s: module %s isn't a pancake-theme\n",
-				pc_program_invocation_name, name);
-		goto error;
-	}
-
-	if(modinfo->init && !(*modinfo->init)())
-	{
-		g_print("%s: initialisation of module %s failed\n",
-				pc_program_invocation_name, name);
-		goto error;
-	}
-	
-	theme = modinfo;
-	modinfo->gmodule = gmod;
-
-	return modinfo;
-
-error:
-	if(gmod && !g_module_close(gmod))
-		g_print("%s: failed to close module %s\n",
-				pc_program_invocation_name, name);
-	return NULL;
-}
-
-PancakePlugin* pc_modloader_get_plugin(const gchar* name)
-{
-	for(GList* cur = plugins; cur; cur = g_list_next(cur))
-	{
-		PancakePlugin* d = cur->data;
-
-		if(d->name == name)
-			return d;
-	}
-
-	return NULL;
-}
-
-PancakeTheme* pc_modloader_get_theme()
-{
-	return theme;
+	return FALSE;
 }
 
 void pc_modloader_cleanup()
@@ -180,22 +129,56 @@ void pc_modloader_cleanup()
 	GList* cur = plugins;
 	while(cur)
 	{
-		PancakePlugin* d = cur->data;
-		if(d->fini)
-			(*d->fini)();
-		g_module_close(d->gmodule);
+		GModule* gmod = cur->data;
+
+		void (*module_fini_func)();
+		if(g_module_symbol(gmod, "pc_module_fini",
+				(gpointer*)&module_fini_func))
+		{
+			(*module_fini_func)();
+		}
+
+		g_module_close(gmod);
 
 		GList* next = g_list_next(cur);
 		plugins = g_list_delete_link(plugins, cur);
 		cur = next;
 	}
+}
 
-	if(theme)
+gint pc_modloader_get_num_widgets()
+{
+	gint num = 0;
+	GList* cur = widgets;
+	while(cur)
 	{
-		if(theme->fini)
-			(*theme->fini)();
-		g_module_close(theme->gmodule);
-		theme = NULL;
+		num++;
+		cur = g_list_next(cur);
 	}
+
+	return num;
+}
+
+gint pc_modloader_get_num_themes()
+{
+	gint num = 0;
+	GList* cur = themes;
+	while(cur)
+	{
+		num++;
+		cur = g_list_next(cur);
+	}
+	
+	return num;
+}
+
+const GList* pc_modloader_get_widgets()
+{
+	return widgets;
+}
+
+const GList* pc_modloader_get_themes()
+{
+	return themes;
 }
 

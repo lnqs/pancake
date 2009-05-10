@@ -15,74 +15,35 @@
  * with this program; if not, see <http://www.gnu.org/licenses/>.
  **/
 
-#ifndef PC_MODULE_H
-#define PC_MODULE_H
-
 #include <gtk/gtk.h>
-#include "pc_style.h"
+#include <confuse.h>
 
 /**
- * @brief Macro to define a interface in plugins usable by pancake
+ * @todo docs
  **/
-#define PANCAKE_PLUGIN(modinfo) \
-		PancakePlugin* _pc_mod_get_plugininfo() { return &modinfo; }
-
-/**
- * @brief Macro to define a interface in themes usable by pancake
- **/
-#define PANCAKE_THEME(modinfo) \
-		PancakeTheme* _pc_mod_get_themeinfo() { return &modinfo; }
-
-/**
- * @brief Plugin providing new widgets for the panel
- **/
-typedef struct PancakePlugin
+typedef struct PcWidgetInfo
 {
-	GModule* gmodule; //!< set by pancake. Ignore it from within modules.
-
-	//! Has to be set to a unique name to identify the plugin
 	const gchar* name;
-
-	//! called immediatly after loading the plugin -- the plugin can use
-	//! this to allocated static ressources shared over multiple instaces,
-	//! initialize data, etc.
-	//! Has to return TRUE on success or FALSE if an error occured
-	gboolean (*init)();
-
-	//! called when the plugin is unloaded to give the plugin the chance
-	//! to clean up and deallocate ressources
-	void (*fini)();
-
-	//! called when a new instace of the plugin's widget has to be created	
-	GtkWidget* (*new_widget)();
-} PancakePlugin;
+	GtkWidget* (*instantiate)(cfg_t* config);
+	cfg_opt_t* options;
+} PcWidgetInfo;
 
 /**
- * @brief The for drawing the panel and widgets within
+ * @todo docs
  **/
-typedef struct PancakeTheme
+typedef struct PcThemeInfo
 {
-	GModule* gmodule; //!< set by pancake. Ignore it from within modules.
-
-	//! Has to be set to a unique name to identify the theme 
 	const gchar* name;
+	GtkStyle* (*instantiate)(cfg_t* config);
+	cfg_opt_t* options;
+} PcThemeInfo;
 
-	//! called immediatly after loading the theme -- the theme can use
-	//! this to allocated static ressources shared over multiple instaces,
-	//! initialize data, etc.
-	//! Has to return TRUE on success or FALSE if an error occured
-	gboolean (*init)();
-
-	//! called when the theme is unloaded to give the plugin the chance
-	//! to clean up and deallocate ressources
-	void (*fini)();
-
-	//! called by pancake when a new instance of the theme has to be created.
-	//! A GtkStyle is fine, but usually you want to return an instance of a
-	//! class derived from from PcStyle, since this is able to draw the
-	//! panel in a less generic way
-	GtkStyle* (*new_style)();
-} PancakeTheme;
-
-#endif
+/**
+ * @todo docs
+ **/
+typedef struct PcModuleCallbacks
+{
+	void (*register_widget)(const PcWidgetInfo*);
+	void (*register_theme)(const PcThemeInfo*);
+} PcModuleCallbacks;
 

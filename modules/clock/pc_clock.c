@@ -15,7 +15,6 @@
  * with this program; if not, see <http://www.gnu.org/licenses/>.
  **/
 
-#include <gtk/gtk.h>
 #include <pc_module.h>
 
 #define PC_TYPE_CLOCK	(pc_clock_get_type())
@@ -132,12 +131,34 @@ static GtkWidget* pc_clock_new()
 	return GTK_WIDGET(g_object_new(PC_TYPE_CLOCK, NULL));
 }
 
-static PancakePlugin pc_clock = {
-	.name       = "clock",
-	.init       = NULL,
-	.fini       = NULL,
-	.new_widget = &pc_clock_new
+static GtkWidget* pc_clock_instantiate(cfg_t* config)
+{
+	GtkWidget* widget = pc_clock_new();
+	GValue value = { 0, };
+	g_value_init(&value, G_TYPE_STRING);
+
+	const gchar* format = cfg_getstr(config, "format");
+	g_value_set_string(&value, format);
+	g_object_set_property(G_OBJECT(widget), "format", &value);
+	g_value_unset(&value);
+
+	return widget;
+}
+
+static cfg_opt_t pc_clock_options[] = {
+	CFG_STR("format", "%H:%M", CFGF_NONE),
+	CFG_END()
 };
 
-PANCAKE_PLUGIN(pc_clock)
+static const PcWidgetInfo pc_clock_info = {
+	.name = "clock",
+	.instantiate = &pc_clock_instantiate,
+	.options = pc_clock_options
+};
+
+gboolean pc_module_init(const PcModuleCallbacks* callbacks)
+{
+	callbacks->register_widget(&pc_clock_info);
+	return TRUE;
+}
 

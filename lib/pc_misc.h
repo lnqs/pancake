@@ -24,5 +24,8 @@
  * It's only valid after pc_commandline_parse has been called */
 extern const gchar* pc_program_invocation_name;
 
+/* todo: docs */
+extern GtkStyle* pc_theme;
+
 #endif
 
