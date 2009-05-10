@@ -31,6 +31,7 @@
 /* TODO: valgrind? */
 /* TODO: Add help for the modules */
 /* TODO: Add trayarea-module */
+/* TODO: Add example-config and install it in /usr/share/doc */
 
 const gchar* pc_program_invocation_name;
 GtkStyle* pc_theme = NULL;

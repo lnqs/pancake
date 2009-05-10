@@ -317,6 +317,8 @@ gboolean pc_configparser_parse(
 	pc_panel_set_align(panel, cfg_getint(cfg, "align"));
 	pc_panel_set_strut_enabled(panel, cfg_getbool(cfg, "strut"));
 
+	cfg_free(cfg);
+	g_free(opts);
 	g_free(filename);
 
 	return TRUE;
