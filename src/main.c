@@ -25,10 +25,7 @@
 #include "pc_panel.h"
 #include "pc_style.h"
 
-/* TODO: static code analysis? */
-/* TODO: valgrind? */
 /* TODO: Add help for the modules */
-/* TODO: Add trayarea-module */
 
 const gchar* pc_program_invocation_name;
 GtkStyle* pc_theme = NULL;

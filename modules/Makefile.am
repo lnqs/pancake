@@ -1,2 +1,2 @@
-SUBDIRS = tasklist defaulttheme clock pager
+SUBDIRS = tasklist defaulttheme clock pager trayarea
 

@@ -1,1 +1,5 @@
 Simon Schönfeld <simon.schoenfeld@web.de>
+
+This project also incorporates code (found in 'modules/trayarea') from
+Anders Carlsson's eggtraymanager, which is licensed under the LGPL.
+He can be contacted per mail to <andersca@gnu.org>.
