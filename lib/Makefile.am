@@ -8,12 +8,10 @@ lib_LTLIBRARIES = libpancake.la
 
 libpancakeinclude_HEADERS = \
 	pc_misc.h \
-	pc_optionconv.h \
 	pc_style.h \
 	pc_types.h
 
 libpancake_la_SOURCES = \
-	pc_optionconv.c \
 	pc_style.c
 
 libpancake_la_LDFLAGS = \

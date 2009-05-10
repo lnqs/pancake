@@ -25,7 +25,6 @@
 #include "pc_panel.h"
 #include "pc_style.h"
 
-/* TODO: unify logging with the glib-logging-functions */
 /* TODO: Test external building of modules */
 /* TODO: static code analysis? */
 /* TODO: valgrind? */
@@ -36,6 +35,12 @@
 const gchar* pc_program_invocation_name;
 GtkStyle* pc_theme = NULL;
 
+static void pc_log_handler(const gchar* log_domain,
+		GLogLevelFlags log_level, const gchar* message, gpointer data)
+{
+	g_print("%s: %s\n", pc_program_invocation_name, message);
+}
+
 static void pc_i18n_init()
 {
 	/* since partitially localisation sucks, this makes everything english,
@@ -44,8 +49,8 @@ static void pc_i18n_init()
 	gtk_disable_setlocale();
 }
 
-gboolean pc_set_style_hook(GSignalInvocationHint* ihint, guint n_param_values,
-		const GValue* param_values, gpointer data)
+static gboolean pc_set_style_hook(GSignalInvocationHint* ihint,
+		guint n_param_values, const GValue* param_values, gpointer data)
 {
 	GtkWidget* widget = GTK_WIDGET(g_value_peek_pointer(param_values));
 	GtkStyle* style = GTK_STYLE(data);
@@ -56,6 +61,10 @@ gboolean pc_set_style_hook(GSignalInvocationHint* ihint, guint n_param_values,
 int main(int argc, char** argv)
 {
 	pc_program_invocation_name = argv[0];
+
+	/*g_log_set_handler(NULL, G_LOG_LEVEL_MASK |
+			G_LOG_FLAG_FATAL | G_LOG_FLAG_RECURSION, &pc_log_handler, NULL);*/
+	g_log_set_default_handler(&pc_log_handler, NULL);
 	
 	if(!pc_sighandler_init())
 		return 2;
@@ -78,7 +87,7 @@ int main(int argc, char** argv)
 
 	if(!pc_theme)
 	{
-		g_print("%s: No theme loaded\n", pc_program_invocation_name);
+		g_critical("No theme loaded");
 		pc_modloader_cleanup();
 		return 2;
 	}

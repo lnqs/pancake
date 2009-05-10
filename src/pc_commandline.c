@@ -47,17 +47,15 @@ const PcCommandlineOpts* pc_commandline_parse(int* argc, char*** argv)
 	g_option_context_add_group(opt_context, default_group);
 	if(!g_option_context_parse(opt_context, argc, argv, &error))
 	{
-		g_print("%s: failed to parse arguments: %s\n",
-				pc_program_invocation_name, error->message);
-
+		g_critical("failed to parse arguments: %s", error->message);
 		g_error_free(error);
 		err = TRUE;
 	}
 
 	if(!err && *argc != 1)
 	{
-		g_print("%s: failed to parse arguments: Unknown argument %s\n",
-				pc_program_invocation_name, (*argv)[1]);
+		g_critical("failed to parse arguments: Unknown argument %s",
+				(*argv)[1]);
 		err = TRUE;
 	}
 	

@@ -89,8 +89,7 @@ static gboolean pc_configparser_load_modules(const gchar* filename)
 	FILE* file = fopen(filename, "r");
 	if(!file)
 	{
-		g_print("%s: failed to open %s: %s\n",
-				pc_program_invocation_name, filename, strerror(errno));
+		g_critical("failed to open %s: %s", filename, strerror(errno));
 		return FALSE;
 	}
 
@@ -113,8 +112,7 @@ static gboolean pc_configparser_load_modules(const gchar* filename)
 	int ret = cfg_parse_buf(cfg, modulesline);
 	if(ret == CFG_FILE_ERROR) /* unknown options will be ignored this pass */
 	{
-		g_print("%s: failed to open %s: %s\n",
-				pc_program_invocation_name, filename, strerror(errno));
+		g_critical("failed to open %s: %s", filename, strerror(errno));
 		goto error;
 	}
 
@@ -177,7 +175,7 @@ static gboolean pc_modloader_load_theme(cfg_t* config)
 	const gchar* theme = cfg_getstr(config, "theme");
 	if(!theme)
 	{
-		g_print("%s: no theme defined\n", pc_program_invocation_name);
+		g_critical("%s: no theme defined", pc_program_invocation_name);
 		return FALSE;
 	}
 
@@ -202,8 +200,7 @@ static gboolean pc_modloader_load_theme(cfg_t* config)
 found:
 	if(!section || g_strcmp0(cfg_title(section), theme))
 	{
-		g_print("%s: theme %s isn't defined\n",
-				pc_program_invocation_name, theme);
+		g_critical("theme %s isn't defined", theme);
 		return FALSE;
 	}
 
@@ -211,8 +208,7 @@ found:
 	GtkStyle* style = info->instantiate(section);
 	if(!style)
 	{
-		g_print("%s: failed to instantiate theme %s\n",
-				pc_program_invocation_name, info->name);
+		g_critical("failed to instantiate theme %s", info->name);
 		return FALSE;
 	}
 
@@ -255,8 +251,7 @@ static gboolean pc_modloader_load_widgets(cfg_t* config, PcPanel* panel)
 found:
 		if(!section || g_strcmp0(cfg_title(section), widget))
 		{
-			g_print("%s: widget %s isn't defined\n",
-					pc_program_invocation_name, widget);
+			g_critical("widget %s isn't defined", widget);
 			return FALSE;
 		}
 
@@ -264,8 +259,7 @@ found:
 		GtkWidget* w = info->instantiate(section);
 		if(!w)
 		{
-			g_print("%s: failed to create widget %s\n",
-					pc_program_invocation_name, info->name);
+			g_critical("failed to create widget %s\n", info->name);
 			return FALSE;
 		}
 
@@ -299,19 +293,18 @@ gboolean pc_configparser_parse(
 	gint ret = cfg_parse(cfg, filename);
 	if(ret == CFG_FILE_ERROR)
 	{
-		g_print("%s: failed to open %s: %s\n",
-				pc_program_invocation_name, filename, strerror(errno));
+		g_critical("failed to open %s: %s\n", filename, strerror(errno));
 		goto error_opts;
 	}
 	else if(ret == CFG_PARSE_ERROR)
 		goto error_opts;
-	
+
 	if(!pc_modloader_load_theme(cfg))
 		goto error_config;
 
 	if(!pc_modloader_load_widgets(cfg, panel))
 		goto error_config;
-	
+
 	pc_panel_set_width(panel, cfg_getfloat(cfg, "width"));
 	pc_panel_set_height(panel, cfg_getint(cfg, "height"));
 	pc_panel_set_align(panel, cfg_getint(cfg, "align"));

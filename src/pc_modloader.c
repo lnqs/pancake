@@ -65,8 +65,8 @@ static GModule* pc_modload_open_modfile(const gchar* name)
 
 	if(!gmod)
 	{
-		g_print("%s: module %s not found at any search-location "
-				"or not usable\n", pc_program_invocation_name, name);
+		g_critical("module %s not found at any search-location or not usable",
+				name);
 	}
 	
 	g_free(fullname);
@@ -94,22 +94,20 @@ gboolean pc_modloader_load_module(const gchar* name)
 	if(!g_module_symbol(gmod, "pc_module_init",
 			(gpointer*)&module_init_func))
 	{
-		g_print("%s\n%s: failed to initialize module %s\n",
-				g_module_error(), pc_program_invocation_name, name);
+		g_critical("%s\nfailed to initialize module %s",
+				g_module_error(), name);
 		goto error;
 	}
 
 	if(!module_init_func)
 	{
-		g_print("%s: %s isn't a pancake-module\n",
-				pc_program_invocation_name, name);
+		g_critical("%s isn't a pancake-module", name);
 		goto error;
 	}
 
 	if(!(*module_init_func)(&mod_callbacks))
 	{
-		g_print("%s: module %s failed to initialise\n",
-				pc_program_invocation_name, name);
+		g_critical("module %s failed to initialise", name);
 		goto error;
 	}
 
@@ -119,8 +117,7 @@ gboolean pc_modloader_load_module(const gchar* name)
 
 error:
 	if(gmod && !g_module_close(gmod))
-		g_print("%s: failed to close module %s\n",
-				pc_program_invocation_name, name);
+		g_critical("failed to close module %s", name);
 	return FALSE;
 }
 

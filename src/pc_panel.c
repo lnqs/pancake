@@ -16,7 +16,6 @@
  **/
 
 #include "pc_panel.h"
-#include <pc_optionconv.h>
 #include <pc_style.h>
 #include <pc_types.h>
 #include "pc_commandline.h"
