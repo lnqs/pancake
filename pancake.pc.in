@@ -7,5 +7,6 @@ plugindir=@libdir@/@PACKAGE@
 Name: pancake
 Description: pancake's module interface
 Version: @VERSION@
-Libs:
-Cflags: -I${includedir} -I${includedir}/@PACKAGE@
+Requires: glib-2.0 gobject-2.0 gtk+-2.0 libwnck-1.0
+Libs: -L${libdir} -lpancake @gtk_LIBS@ @libwnck_LIBS@ @libconfuse_LIBS@
+Cflags: -I${includedir} -I${includedir}/@PACKAGE@ @gtk_CFLAGS@ @libwnck_CFLAGS@ @libconfuse_CFLAGS@

@@ -1,0 +1,37 @@
+pancake
+=======
+	This is package contains pancake, a highly-configureable, modular,
+	themeable, GTK+-2.0-driven panel for X11.
+	
+	The newest version can be found at
+	<http://www.failedprojects.de/projects/show/pancake>,
+	the author can be contacted via mail to <lynxed@web.de>.
+
+Installation
+============
+	The usual make && make install stuff should work. See the file INSTALL
+	if you wish further explanation.
+
+Configuration
+=============
+	An example-configuration-file is included in this distribution. It can
+	be found in the top directory of the distributional, named 'pancakerc',
+	and will be copied to the dist_doc_DATA dir, typically
+	'/usr/share/doc/pancake' or '/usr/local/share/pancake'. Copy it in your
+	home-directroy and name it '.pancakerc'. It contains comments explaing
+	all options,
+
+	Alternatively, pancake is able to create a sample-configuration including
+	options of all available modules -- execute 'pancake --help' for more
+	information.
+
+	If you have any questions, don't be shy to post a message on
+	<http://www.failedprojects.de/> or send me an e-mail.
+
+How to report bugs
+==================
+	Bugs can be reported to the ticket-system on the projects homepage
+	or via mail to the author
+
+	I would also be happy if you send me an e-mail if you like pancake :o)
+
