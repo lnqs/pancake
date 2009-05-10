@@ -194,11 +194,12 @@ static gboolean pc_modloader_load_theme(cfg_t* config)
 			section = cfg_getnsec(config, info->name, i);
 
 			if(!g_strcmp0(cfg_title(section), theme))
-				break;
+				goto found;
 		}
 
 	} while((cur = g_list_next(cur)));
 
+found:
 	if(!section || g_strcmp0(cfg_title(section), theme))
 	{
 		g_print("%s: theme %s isn't defined\n",
@@ -246,11 +247,12 @@ static gboolean pc_modloader_load_widgets(cfg_t* config, PcPanel* panel)
 				section = cfg_getnsec(config, info->name, j);
 
 				if(!g_strcmp0(cfg_title(section), widget))
-					break;
+					goto found;
 			}
 
 		} while((cur = g_list_next(cur)));
 
+found:
 		if(!section || g_strcmp0(cfg_title(section), widget))
 		{
 			g_print("%s: widget %s isn't defined\n",

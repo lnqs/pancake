@@ -75,12 +75,25 @@ static GtkWidget* pc_workspacename_new()
 	return GTK_WIDGET(g_object_new(PC_TYPE_WORKSPACENAME, NULL));
 }
 
-static PancakePlugin pc_workspacename = {
-	.name       = "workspacename",
-	.init       = NULL,
-	.fini       = NULL,
-	.new_widget = &pc_workspacename_new
+static GtkWidget* pc_workspacename_instantiate(cfg_t* config)
+{
+	return pc_workspacename_new();
+}
+
+
+static cfg_opt_t pc_workspacename_options[] = {
+	CFG_END()
 };
 
-PANCAKE_PLUGIN(pc_workspacename)
+static const PcWidgetInfo pc_workspacename_info = {
+	.name = "workspacename",
+	.instantiate = &pc_workspacename_instantiate,
+	.options = pc_workspacename_options
+};
+
+gboolean pc_module_init(const PcModuleCallbacks* callbacks)
+{
+	callbacks->register_widget(&pc_workspacename_info);
+	return TRUE;
+}
 
