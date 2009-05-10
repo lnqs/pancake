@@ -3,12 +3,12 @@ INCLUDES = \
 	$(gtk_CFLAGS) \
 	$(libwnck_CFLAGS)
 
-pkglib_LTLIBRARIES = libworkspacename.la
+pkglib_LTLIBRARIES = libpager.la
 
-libworkspacename_la_SOURCES = \
-	pc_workspacename.c
+libpager_la_SOURCES = \
+	pc_pager.c
 
-libworkspacename_la_LDFLAGS = \
+libpager_la_LDFLAGS = \
 	$(gtk_LIBS) \
 	$(libwnck_LIBS) \
 	$(top_srcdir)/lib/libpancake.la \

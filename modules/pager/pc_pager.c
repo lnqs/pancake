@@ -20,26 +20,13 @@
 #define WNCK_I_KNOW_THIS_IS_UNSTABLE
 #include <libwnck/libwnck.h>
 
-static GtkWidget* pc_tasklist_instantiate(cfg_t* config)
-{
-	GtkWidget* tl = wnck_tasklist_new(wnck_screen_get_default());
-	wnck_tasklist_set_button_relief(WNCK_TASKLIST(tl), GTK_RELIEF_NONE);
-	wnck_tasklist_set_include_all_workspaces(
-			WNCK_TASKLIST(tl), cfg_getbool(config, "all_workspaces"));
-	wnck_tasklist_set_grouping(
-			WNCK_TASKLIST(tl), cfg_getint(config, "grouping"));
-	return tl;
-}
-
-static int pc_tasklist_parse_grouping(
+static int pc_pager_parse_mode(
 		cfg_t* cfg, cfg_opt_t* opt, const char* value, void* result)
 {
-	if(!g_strcmp0(value, "never"))
-		*(glong*)result = WNCK_TASKLIST_NEVER_GROUP;
-	else if(!g_strcmp0(value, "auto"))
-		*(glong*)result = WNCK_TASKLIST_AUTO_GROUP;
-	else if(!g_strcmp0(value, "always"))
-		*(glong*)result = WNCK_TASKLIST_ALWAYS_GROUP;
+	if(!g_strcmp0(value, "name"))
+		*(glong*)result = WNCK_PAGER_DISPLAY_NAME;
+	else if(!g_strcmp0(value, "content"))
+		*(glong*)result = WNCK_PAGER_DISPLAY_CONTENT;
 	else
 	{
 		cfg_error(cfg, "invalid value for option %s: %s", opt->name, value);
@@ -49,22 +36,34 @@ static int pc_tasklist_parse_grouping(
 	return 0;
 }
 
-static cfg_opt_t pc_tasklist_options[] = {
+static GtkWidget* pc_pager_instantiate(cfg_t* config)
+{
+	GtkWidget* pager = wnck_pager_new(wnck_screen_get_default());
+	wnck_pager_set_shadow_type(WNCK_PAGER(pager), GTK_SHADOW_NONE);
+	wnck_pager_set_display_mode(WNCK_PAGER(pager), cfg_getint(config, "mode"));
+	wnck_pager_set_show_all(
+			WNCK_PAGER(pager), cfg_getbool(config, "all_workspaces"));
+	wnck_pager_set_n_rows(WNCK_PAGER(pager), cfg_getint(config, "rows"));
+	return pager;
+}
+
+static cfg_opt_t pc_pager_options[] = {
+	CFG_INT_CB("mode", WNCK_PAGER_DISPLAY_CONTENT, CFGF_NONE,
+			&pc_pager_parse_mode),
 	CFG_BOOL("all_workspaces", TRUE, CFGF_NONE),
-	CFG_INT_CB("grouping", WNCK_TASKLIST_NEVER_GROUP, CFGF_NONE,
-			&pc_tasklist_parse_grouping),
+	CFG_INT("rows", 1, CFGF_NONE),
 	CFG_END()
 };
 
-static const PcWidgetInfo pc_tasklist_info = {
-	.name = "tasklist",
-	.instantiate = &pc_tasklist_instantiate,
-	.options = pc_tasklist_options
+static const PcWidgetInfo pc_pager_info = {
+	.name = "pager",
+	.instantiate = &pc_pager_instantiate,
+	.options = pc_pager_options
 };
 
 gboolean pc_module_init(const PcModuleCallbacks* callbacks)
 {
-	callbacks->register_widget(&pc_tasklist_info);
+	callbacks->register_widget(&pc_pager_info);
 	return TRUE;
 }
 

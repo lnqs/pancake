@@ -40,7 +40,7 @@ AC_CONFIG_FILES([ \
 	modules/Makefile \
 	modules/tasklist/Makefile \
 	modules/clock/Makefile \
-	modules/workspacename/Makefile \
+	modules/pager/Makefile \
 	modules/defaulttheme/Makefile \
 	pancake.pc
 ])

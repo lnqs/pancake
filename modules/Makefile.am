@@ -1,2 +1,2 @@
-SUBDIRS = tasklist defaulttheme clock workspacename
+SUBDIRS = tasklist defaulttheme clock pager
 
