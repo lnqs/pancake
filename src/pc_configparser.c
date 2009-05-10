@@ -52,9 +52,9 @@ static int pc_configparser_parse_align(
 		cfg_t* cfg, cfg_opt_t* opt, const char* value, void* result)
 {
 	if(!g_strcmp0(value, "top"))
-		*(long int *)result = PC_ALIGN_TOP;
+		*(glong*)result = PC_ALIGN_TOP;
 	else if(!g_strcmp0(value, "bottom"))
-		*(long int*)result = PC_ALIGN_BOTTOM;
+		*(glong*)result = PC_ALIGN_BOTTOM;
 	else
 	{
 		cfg_error(cfg, "invalid value for option %s: %s", opt->name, value);
@@ -147,7 +147,7 @@ static cfg_opt_t* pc_configparser_build_optlist()
 
 	opts[i++] = (cfg_opt_t)CFG_INT("height", 24, CFGF_NONE);
 	opts[i++] = (cfg_opt_t)CFG_FLOAT("width", 0.95f, CFGF_NONE);
-	opts[i++] = (cfg_opt_t)CFG_INT_CB("align", 2, CFGF_NONE,
+	opts[i++] = (cfg_opt_t)CFG_INT_CB("align", PC_ALIGN_BOTTOM, CFGF_NONE,
 			&pc_configparser_parse_align);
 	opts[i++] = (cfg_opt_t)CFG_BOOL("strut", 1, CFGF_NONE);
 
@@ -270,7 +270,7 @@ found:
 		}
 
 		gtk_box_pack_end(pc_panel_get_box(panel),
-				w, expand, FALSE, pc_style_get_widget_padding(pc_theme));
+				w, expand, expand, pc_style_get_widget_padding(pc_theme));
 	}
 	
 	return TRUE;

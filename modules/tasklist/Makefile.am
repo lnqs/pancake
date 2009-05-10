@@ -5,12 +5,8 @@ INCLUDES = \
 
 pkglib_LTLIBRARIES = libtasklist.la
 
-noinst_HEADERS = \
-	pc_task.h
-
 libtasklist_la_SOURCES = \
-	pc_tasklist.c \
-	pc_task.c
+	pc_tasklist.c
 
 libtasklist_la_LDFLAGS = \
 	$(gtk_LIBS) \

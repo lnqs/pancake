@@ -19,85 +19,48 @@
 #include <pc_module.h>
 #define WNCK_I_KNOW_THIS_IS_UNSTABLE
 #include <libwnck/libwnck.h>
-#include "pc_task.h"
 
-#define PC_TYPE_TASKLIST (pc_tasklist_get_type())
-#define PC_TASKLIST(obj) \
-		(G_TYPE_CHECK_INSTANCE_CAST((obj), PC_TYPE_TASKLIST, PcTasklist))
-#define PC_TASKLIST_CLASS(obj) \
-		(G_TYPE_CHECK_CLASS_CAST((obj), PC_TASKLIST, PcTasklistClass))
-#define PC_IS_TASKLIST(obj) \
-		(G_TYPE_CHECK_INSTANCE_TYPE((obj), PC_TYPE_TASKLIST))
-#define PC_IS_TASKLIST_CLASS(obj) \
-		(G_TYPE_CHECK_CLASS_TYPE((obj), PC_TYPE_TASKLIST))
-#define PC_TASKLIST_GET_CLASS \
-		(G_TYPE_INSTANCE_GET_CLASS((obj), PC_TYPE_TASKLIST, PcTasklistClass))
-
-typedef struct PcTasklist
+static GtkWidget* pc_tasklist_instantiate(cfg_t* config)
 {
-	GtkHBox parent;
-} PcTasklist;
-
-typedef struct PcTasklistClass
-{
-	GtkHBoxClass parent_class;
-} PcTasklistClass;
-
-G_DEFINE_TYPE(PcTasklist, pc_tasklist, GTK_TYPE_HBOX);
-
-#define PC_TASKLIST_GET_PRIVATE(obj) \
-	(G_TYPE_INSTANCE_GET_PRIVATE((obj), PC_TYPE_TASKLIST, PcTasklistPrivate))
-
-static void pc_tasklist_window_opened(WnckScreen* wscr,
-		WnckWindow* wwin, gpointer data)
-{
-	PcTasklist* tasklist = PC_TASKLIST(data);
-
-	GtkWidget* task = pc_task_new(wwin);
-	gtk_box_pack_end(GTK_BOX(tasklist), task, FALSE, TRUE, 0);
+	GtkWidget* tl = wnck_tasklist_new(wnck_screen_get_default());
+	wnck_tasklist_set_button_relief(WNCK_TASKLIST(tl), GTK_RELIEF_NONE);
+	return tl;
 }
 
-static void pc_tasklist_delete_child_if_wwin(GtkWidget* widget, gpointer data)
+static int pc_tasklist_parse_grouping(
+		cfg_t* cfg, cfg_opt_t* opt, const char* value, void* result)
 {
-	if(PC_IS_TASK(widget) && pc_task_get_wnck_window(PC_TASK(widget)) == data)
-		gtk_widget_destroy(widget);
+	if(!g_strcmp0(value, "never"))
+		*(glong*)result = WNCK_TASKLIST_NEVER_GROUP;
+	else if(!g_strcmp0(value, "auto"))
+		*(glong*)result = WNCK_TASKLIST_AUTO_GROUP;
+	else if(!g_strcmp0(value, "always"))
+		*(glong*)result = WNCK_TASKLIST_ALWAYS_GROUP;
+	else
+	{
+		cfg_error(cfg, "invalid value for option %s: %s", opt->name, value);
+		return -1;
+	}
+	
+	return 0;
 }
 
-static void pc_tasklist_window_closed(WnckScreen* wscr,
-		WnckWindow* wwin, gpointer data)
-{
-	PcTasklist* tasklist = PC_TASKLIST(data);
-
-	gtk_container_foreach(GTK_CONTAINER(tasklist),
-			&pc_tasklist_delete_child_if_wwin, wwin);
-}
-
-static void pc_tasklist_class_init(PcTasklistClass* class)
-{
-}
-
-static void pc_tasklist_init(PcTasklist* tasklist)
-{
-	GTK_BOX(tasklist)->spacing = 0;
-	GTK_BOX(tasklist)->homogeneous = TRUE;
-
-	g_signal_connect(G_OBJECT(wnck_screen_get_default()), "window_opened",
-			G_CALLBACK(pc_tasklist_window_opened), tasklist);
-	g_signal_connect(G_OBJECT(wnck_screen_get_default()), "window_closed",
-			G_CALLBACK(pc_tasklist_window_closed), tasklist);
-}
-
-static GtkWidget* pc_tasklist_new()
-{
-	return GTK_WIDGET(g_object_new(PC_TYPE_TASKLIST, NULL));
-}
-
-static PancakePlugin pc_tasklist = {
-	.name       = "tasklist",
-	.init       = NULL,
-	.fini       = NULL,
-	.new_widget = &pc_tasklist_new
+static cfg_opt_t pc_tasklist_options[] = {
+	CFG_INT_CB("grouping", WNCK_TASKLIST_NEVER_GROUP, CFGF_NONE,
+			&pc_tasklist_parse_grouping),
+	CFG_BOOL("all_workspaces", TRUE, CFGF_NONE),
+	CFG_END()
 };
 
-PANCAKE_PLUGIN(pc_tasklist)
+static const PcWidgetInfo pc_tasklist_info = {
+	.name = "tasklist",
+	.instantiate = &pc_tasklist_instantiate,
+	.options = pc_tasklist_options
+};
+
+gboolean pc_module_init(const PcModuleCallbacks* callbacks)
+{
+	callbacks->register_widget(&pc_tasklist_info);
+	return TRUE;
+}
 
