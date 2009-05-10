@@ -15,6 +15,8 @@
  * with this program; if not, see <http://www.gnu.org/licenses/>.
  **/
 
+/* TODO: make this looking good o.O */
+
 #include <gtk/gtk.h>
 #include <pc_module.h>
 #include <pc_style.h>

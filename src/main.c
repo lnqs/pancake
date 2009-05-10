@@ -25,12 +25,10 @@
 #include "pc_panel.h"
 #include "pc_style.h"
 
-/* TODO: Test external building of modules */
 /* TODO: static code analysis? */
 /* TODO: valgrind? */
 /* TODO: Add help for the modules */
 /* TODO: Add trayarea-module */
-/* TODO: Add example-config and install it in /usr/share/doc */
 
 const gchar* pc_program_invocation_name;
 GtkStyle* pc_theme = NULL;
