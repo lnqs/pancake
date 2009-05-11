@@ -263,7 +263,7 @@ found:
 			return FALSE;
 		}
 
-		gtk_box_pack_end(pc_panel_get_box(panel),
+		gtk_box_pack_start(pc_panel_get_box(panel),
 				w, expand, expand, pc_style_get_widget_padding(pc_theme));
 	}
 	
