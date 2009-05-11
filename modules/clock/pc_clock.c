@@ -131,7 +131,7 @@ static GtkWidget* pc_clock_new()
 	return GTK_WIDGET(g_object_new(PC_TYPE_CLOCK, NULL));
 }
 
-static GtkWidget* pc_clock_instantiate(cfg_t* config)
+static GtkWidget* pc_clock_instantiate(Config* config)
 {
 	GtkWidget* widget = pc_clock_new();
 	GValue value = { 0, };
@@ -145,7 +145,7 @@ static GtkWidget* pc_clock_instantiate(cfg_t* config)
 	return widget;
 }
 
-static cfg_opt_t pc_clock_options[] = {
+static ConfigOption pc_clock_options[] = {
 	CFG_STR("format", "%H:%M", CFGF_NONE),
 	CFG_END()
 };

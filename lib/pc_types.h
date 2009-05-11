@@ -18,6 +18,8 @@
 #ifndef PC_TYPES_H
 #define PC_TYPES_H
 
+#include <confuse.h>
+
 /**
  * @brief enum to display variuos alignments on screen
  **/
@@ -28,6 +30,18 @@ typedef enum PcAlignment
 	PC_ALIGN_BOTTOM,
 	PC_ALIGN_LAST
 } PcAlignment;
+
+/**
+ * @brief typedef of libconfuse's cfg_t, just to have a consistent
+ *        naming-scheme
+ **/
+typedef cfg_t Config;
+
+/**
+ * @brief typedef of libconfuse's cfg_opt_t, just to have a consistent
+ *        naming-scheme
+ **/
+typedef cfg_opt_t ConfigOption;
 
 #endif
 

@@ -17,6 +17,7 @@
 
 #include <gtk/gtk.h>
 #include <confuse.h>
+#include <pc_types.h>
 
 /**
  * @brief struct providing information about a widget provided by a module
@@ -29,10 +30,10 @@ typedef struct PcWidgetInfo
 	const gchar* name; //!< unique name of the widget-type
 
 	//! pointer to a function suitable to create an instance of the widget
-	GtkWidget* (*instantiate)(cfg_t* config);
+	GtkWidget* (*instantiate)(Config* config);
 
 	//! libconfuse-conform options that may be set for the widget
-	cfg_opt_t* options;
+	ConfigOption* options;
 } PcWidgetInfo;
 
 /**
@@ -47,10 +48,10 @@ typedef struct PcThemeInfo
 
 	//! pointer to a function suitable to create an instance of the
 	//! theme's style
-	GtkStyle* (*instantiate)(cfg_t* config);
+	GtkStyle* (*instantiate)(Config* config);
 
 	//! libconfuse-conform options that may be set for the theme
-	cfg_opt_t* options;
+	ConfigOption* options;
 } PcThemeInfo;
 
 /**

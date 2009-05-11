@@ -148,13 +148,13 @@ static GtkStyle* pc_defaulttheme_style_new()
 	return GTK_STYLE(g_object_new(PC_TYPE_DEFAULTTHEME_STYLE, NULL));
 }
 
-static GtkStyle* pc_defaulttheme_instantiate(cfg_t* options)
+static GtkStyle* pc_defaulttheme_instantiate(Config* options)
 {
 	return pc_defaulttheme_style_new();
 }
 
 /* TODO: Add options to change colors, rounded edges and alpha */
-static cfg_opt_t pc_defaulttheme_options[] = {
+static ConfigOption pc_defaulttheme_options[] = {
 	CFG_END()
 };
 

@@ -250,12 +250,12 @@ GtkWidget* pc_trayarea_new()
 	return GTK_WIDGET(g_object_new(PC_TYPE_TRAYAREA, NULL));
 }
 
-static GtkWidget* pc_trayarea_instantiate(cfg_t* config)
+static GtkWidget* pc_trayarea_instantiate(Config* config)
 {
 	return pc_trayarea_new();
 }
 
-static cfg_opt_t pc_trayarea_options[] = {
+static ConfigOption pc_trayarea_options[] = {
 	CFG_END()
 };
 

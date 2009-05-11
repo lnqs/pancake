@@ -24,7 +24,7 @@
 #include <pc_style.h>
 #include "pc_modloader.h"
 
-static gint pc_configparser_validate_height(cfg_t* cfg, cfg_opt_t* opt)
+static gint pc_configparser_validate_height(Config* cfg, ConfigOption* opt)
 {
 	gint val = cfg_opt_getnint(opt, 0);
 	if(val < 0)
@@ -36,7 +36,7 @@ static gint pc_configparser_validate_height(cfg_t* cfg, cfg_opt_t* opt)
 	return 0;
 }
 
-static gint pc_configparser_validate_width(cfg_t* cfg, cfg_opt_t* opt)
+static gint pc_configparser_validate_width(Config* cfg, ConfigOption* opt)
 {
 	gfloat val = cfg_opt_getnfloat(opt, 0);
 	if(val < 0.0f || val > 1.0f)
@@ -49,7 +49,7 @@ static gint pc_configparser_validate_width(cfg_t* cfg, cfg_opt_t* opt)
 }
 
 static int pc_configparser_parse_align(
-		cfg_t* cfg, cfg_opt_t* opt, const char* value, void* result)
+		Config* cfg, ConfigOption* opt, const char* value, void* result)
 {
 	if(!g_strcmp0(value, "top"))
 		*(glong*)result = PC_ALIGN_TOP;
@@ -79,7 +79,7 @@ static gboolean pc_configparser_load_modules(const gchar* filename)
 	/* This sucks a bit, since the
 	   error-checking of libconfuse forces us to pre-parse the config, but
 	   I don't see a better way */
-	static cfg_opt_t firstpass_opts[] = {
+	static ConfigOption firstpass_opts[] = {
 		CFG_STR_LIST("modules", "", CFGF_NONE),
 		CFG_END()
 	};
@@ -108,7 +108,7 @@ static gboolean pc_configparser_load_modules(const gchar* filename)
 	fclose(file);
 
 	/* pass it to confuse */
-	cfg_t* cfg = cfg_init(firstpass_opts, CFGF_NOCASE);
+	Config* cfg = cfg_init(firstpass_opts, CFGF_NOCASE);
 	int ret = cfg_parse_buf(cfg, modulesline);
 	if(ret == CFG_FILE_ERROR) /* unknown options will be ignored this pass */
 	{
@@ -133,27 +133,27 @@ error:
 	return FALSE;
 }
 
-static cfg_opt_t* pc_configparser_build_optlist()
+static ConfigOption* pc_configparser_build_optlist()
 {
-	cfg_opt_t* opts = g_new(cfg_opt_t, pc_modloader_get_num_widgets() +
+	ConfigOption* opts = g_new(ConfigOption, pc_modloader_get_num_widgets() +
 			pc_modloader_get_num_themes() + 8);
 
 	gint i = 0;
-	opts[i++] = (cfg_opt_t)CFG_STR_LIST("modules", "", CFGF_NONE);
-	opts[i++] = (cfg_opt_t)CFG_STR("theme", NULL, CFGF_NONE);
-	opts[i++] = (cfg_opt_t)CFG_STR_LIST("widgets", "", CFGF_NONE);
+	opts[i++] = (ConfigOption)CFG_STR_LIST("modules", "", CFGF_NONE);
+	opts[i++] = (ConfigOption)CFG_STR("theme", NULL, CFGF_NONE);
+	opts[i++] = (ConfigOption)CFG_STR_LIST("widgets", "", CFGF_NONE);
 
-	opts[i++] = (cfg_opt_t)CFG_INT("height", 24, CFGF_NONE);
-	opts[i++] = (cfg_opt_t)CFG_FLOAT("width", 0.95f, CFGF_NONE);
-	opts[i++] = (cfg_opt_t)CFG_INT_CB("align", PC_ALIGN_BOTTOM, CFGF_NONE,
+	opts[i++] = (ConfigOption)CFG_INT("height", 24, CFGF_NONE);
+	opts[i++] = (ConfigOption)CFG_FLOAT("width", 0.95f, CFGF_NONE);
+	opts[i++] = (ConfigOption)CFG_INT_CB("align", PC_ALIGN_BOTTOM, CFGF_NONE,
 			&pc_configparser_parse_align);
-	opts[i++] = (cfg_opt_t)CFG_BOOL("strut", 1, CFGF_NONE);
+	opts[i++] = (ConfigOption)CFG_BOOL("strut", 1, CFGF_NONE);
 
 	const GList* cur = pc_modloader_get_widgets();
 	do
 	{
 		PcWidgetInfo* info = cur->data;
-		opts[i++] = (cfg_opt_t)CFG_SEC((gchar*)info->name,
+		opts[i++] = (ConfigOption)CFG_SEC((gchar*)info->name,
 				info->options, CFGF_MULTI | CFGF_TITLE);
 	} while((cur = g_list_next(cur)));
 
@@ -161,16 +161,16 @@ static cfg_opt_t* pc_configparser_build_optlist()
 	do
 	{
 		PcWidgetInfo* info = cur->data;
-		opts[i++] = (cfg_opt_t)CFG_SEC((gchar*)info->name,
+		opts[i++] = (ConfigOption)CFG_SEC((gchar*)info->name,
 				info->options, CFGF_MULTI | CFGF_TITLE);
 	} while((cur = g_list_next(cur)));
 
-	opts[i++] = (cfg_opt_t)CFG_END();
+	opts[i++] = (ConfigOption)CFG_END();
 
 	return opts;
 }
 
-static gboolean pc_modloader_load_theme(cfg_t* config)
+static gboolean pc_modloader_load_theme(Config* config)
 {
 	const gchar* theme = cfg_getstr(config, "theme");
 	if(!theme)
@@ -179,7 +179,7 @@ static gboolean pc_modloader_load_theme(cfg_t* config)
 		return FALSE;
 	}
 
-	cfg_t* section = NULL;
+	Config* section = NULL;
 	PcThemeInfo* info = NULL;
 
 	/* find the section for our active theme */
@@ -217,13 +217,13 @@ found:
 	return TRUE;
 }
 
-static gboolean pc_modloader_load_widgets(cfg_t* config, PcPanel* panel)
+static gboolean pc_modloader_load_widgets(Config* config, PcPanel* panel)
 {
 	for(int i = 0; i < cfg_size(config, "widgets"); i++)
 	{
 		const gchar* widget = cfg_getnstr(config, "widgets", i);
 		gboolean expand = FALSE;
-		cfg_t* section = NULL;
+		Config* section = NULL;
 		PcWidgetInfo* info = NULL;
 
 		/* options given for this widget? */
@@ -283,9 +283,9 @@ gboolean pc_configparser_parse(
 	}
 
 	/* time to do the real parsing */
-	cfg_opt_t* opts = pc_configparser_build_optlist();
+	ConfigOption* opts = pc_configparser_build_optlist();
 		
-	cfg_t* cfg = cfg_init(opts, CFGF_NOCASE);
+	Config* cfg = cfg_init(opts, CFGF_NOCASE);
 
 	cfg_set_validate_func(cfg, "height", &pc_configparser_validate_height);
 	cfg_set_validate_func(cfg, "width", &pc_configparser_validate_width);

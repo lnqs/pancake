@@ -20,7 +20,7 @@
 #define WNCK_I_KNOW_THIS_IS_UNSTABLE
 #include <libwnck/libwnck.h>
 
-static GtkWidget* pc_tasklist_instantiate(cfg_t* config)
+static GtkWidget* pc_tasklist_instantiate(Config* config)
 {
 	GtkWidget* tl = wnck_tasklist_new(wnck_screen_get_default());
 	wnck_tasklist_set_button_relief(WNCK_TASKLIST(tl), GTK_RELIEF_NONE);
@@ -32,7 +32,7 @@ static GtkWidget* pc_tasklist_instantiate(cfg_t* config)
 }
 
 static int pc_tasklist_parse_grouping(
-		cfg_t* cfg, cfg_opt_t* opt, const char* value, void* result)
+		Config* cfg, ConfigOption* opt, const char* value, void* result)
 {
 	if(!g_strcmp0(value, "never"))
 		*(glong*)result = WNCK_TASKLIST_NEVER_GROUP;
@@ -49,7 +49,7 @@ static int pc_tasklist_parse_grouping(
 	return 0;
 }
 
-static cfg_opt_t pc_tasklist_options[] = {
+static ConfigOption pc_tasklist_options[] = {
 	CFG_BOOL("all_workspaces", TRUE, CFGF_NONE),
 	CFG_INT_CB("grouping", WNCK_TASKLIST_NEVER_GROUP, CFGF_NONE,
 			&pc_tasklist_parse_grouping),

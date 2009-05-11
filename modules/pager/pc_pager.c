@@ -21,7 +21,7 @@
 #include <libwnck/libwnck.h>
 
 static int pc_pager_parse_mode(
-		cfg_t* cfg, cfg_opt_t* opt, const char* value, void* result)
+		Config* cfg, ConfigOption* opt, const char* value, void* result)
 {
 	if(!g_strcmp0(value, "name"))
 		*(glong*)result = WNCK_PAGER_DISPLAY_NAME;
@@ -36,7 +36,7 @@ static int pc_pager_parse_mode(
 	return 0;
 }
 
-static GtkWidget* pc_pager_instantiate(cfg_t* config)
+static GtkWidget* pc_pager_instantiate(Config* config)
 {
 	GtkWidget* pager = wnck_pager_new(wnck_screen_get_default());
 	wnck_pager_set_shadow_type(WNCK_PAGER(pager), GTK_SHADOW_NONE);
@@ -47,7 +47,7 @@ static GtkWidget* pc_pager_instantiate(cfg_t* config)
 	return pager;
 }
 
-static cfg_opt_t pc_pager_options[] = {
+static ConfigOption pc_pager_options[] = {
 	CFG_INT_CB("mode", WNCK_PAGER_DISPLAY_CONTENT, CFGF_NONE,
 			&pc_pager_parse_mode),
 	CFG_BOOL("all_workspaces", TRUE, CFGF_NONE),
