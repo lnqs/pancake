@@ -287,9 +287,9 @@ static void pc_panel_class_init(PcPanelClass* class)
 			g_param_spec_float("width",
 					"The panel's width",
 					"The panel's width, relativ to the width of screen in "
-							"range 0.0f..1.0f. Default: 0.95f",
+							"range 0.0f..1.0f. Default: 0.98f",
 					0.0f, 1.0f,
-					0.95f,
+					0.98f,
 					G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
 	g_object_class_install_property(obj_class, PROP_HEIGHT,
 			g_param_spec_int("height",

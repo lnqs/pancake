@@ -26,6 +26,8 @@
 #include "pc_style.h"
 
 /* TODO: Add help for the modules */
+/* TODO: Make defaultpaddig between widgets smaller */
+/* TODO: Make panel lesser in height, per default? */
 
 const gchar* pc_program_invocation_name;
 GtkStyle* pc_theme = NULL;
@@ -76,13 +78,6 @@ int main(int argc, char** argv)
 
 	if(!pc_configparser_parse((PcPanel*)panel, cmdline_opts))
 	{
-		pc_modloader_cleanup();
-		return 2;
-	}
-
-	if(!pc_theme)
-	{
-		g_critical("No theme loaded");
 		pc_modloader_cleanup();
 		return 2;
 	}

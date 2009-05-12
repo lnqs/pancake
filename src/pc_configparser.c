@@ -76,9 +76,8 @@ static gchar* pc_configparser_determine_filename(
 
 static gboolean pc_configparser_load_modules(const gchar* filename)
 {
-	/* This sucks a bit, since the
-	   error-checking of libconfuse forces us to pre-parse the config, but
-	   I don't see a better way */
+	/* This sucks a bit, since the error-checking of libconfuse forces us
+	   to pre-parse the config, but I don't see a better way */
 	static ConfigOption firstpass_opts[] = {
 		CFG_STR_LIST("modules", "", CFGF_NONE),
 		CFG_END()
@@ -144,7 +143,7 @@ static ConfigOption* pc_configparser_build_optlist()
 	opts[i++] = (ConfigOption)CFG_STR_LIST("widgets", "", CFGF_NONE);
 
 	opts[i++] = (ConfigOption)CFG_INT("height", 24, CFGF_NONE);
-	opts[i++] = (ConfigOption)CFG_FLOAT("width", 0.95f, CFGF_NONE);
+	opts[i++] = (ConfigOption)CFG_FLOAT("width", 0.98f, CFGF_NONE);
 	opts[i++] = (ConfigOption)CFG_INT_CB("align", PC_ALIGN_BOTTOM, CFGF_NONE,
 			&pc_configparser_parse_align);
 	opts[i++] = (ConfigOption)CFG_BOOL("strut", 1, CFGF_NONE);
@@ -174,10 +173,7 @@ static gboolean pc_modloader_load_theme(Config* config)
 {
 	const gchar* theme = cfg_getstr(config, "theme");
 	if(!theme)
-	{
-		g_critical("%s: no theme defined", pc_program_invocation_name);
-		return FALSE;
-	}
+		return TRUE;
 
 	Config* section = NULL;
 	PcThemeInfo* info = NULL;
