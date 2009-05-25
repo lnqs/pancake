@@ -51,10 +51,18 @@ static gint pc_configparser_validate_width(Config* cfg, ConfigOption* opt)
 static int pc_configparser_parse_align(
 		Config* cfg, ConfigOption* opt, const char* value, void* result)
 {
-	if(!g_strcmp0(value, "top"))
+	if(!g_strcmp0(value, "top-left"))
+		*(glong*)result = PC_ALIGN_TOP_LEFT;
+	else if(!g_strcmp0(value, "top"))
 		*(glong*)result = PC_ALIGN_TOP;
+	else if(!g_strcmp0(value, "top-right"))
+		*(glong*)result = PC_ALIGN_TOP_RIGHT;
+	else if(!g_strcmp0(value, "bottom-left"))
+		*(glong*)result = PC_ALIGN_BOTTOM_LEFT;
 	else if(!g_strcmp0(value, "bottom"))
 		*(glong*)result = PC_ALIGN_BOTTOM;
+	else if(!g_strcmp0(value, "bottom-right"))
+		*(glong*)result = PC_ALIGN_BOTTOM_RIGHT;
 	else
 	{
 		cfg_error(cfg, "invalid value for option %s: %s", opt->name, value);

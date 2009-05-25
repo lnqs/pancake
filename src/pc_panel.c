@@ -79,8 +79,21 @@ static void pc_panel_align_size_pos(PcPanel* panel)
 	gint w = scr_w * priv->width;
 	gint h = priv->height;
 
-	gint x = (scr_w - w) / 2;
-	gint y = (priv->align == PC_ALIGN_TOP ? 0 : scr_h - h);
+	gint x;
+	gint y;
+
+	if(priv->align == PC_ALIGN_TOP_LEFT || priv->align == PC_ALIGN_BOTTOM_LEFT)
+		x = 0;
+	else if(priv->align == PC_ALIGN_TOP || priv->align == PC_ALIGN_BOTTOM)
+		x = (scr_w - w) / 2;
+	else /* == *_RIGHT */
+		x = scr_w - w;
+
+	if(priv->align == PC_ALIGN_TOP_LEFT ||
+			priv->align == PC_ALIGN_TOP || priv->align == PC_ALIGN_TOP_RIGHT)
+		y = 0;
+	else /* == *_BOTTOM */
+		y = scr_h - h;
 
 	int curr_w, curr_h;
 	gtk_window_get_size(GTK_WINDOW(panel), &curr_w, &curr_h);
