@@ -292,30 +292,30 @@ static void pc_panel_class_init(PcPanelClass* class)
 	g_object_class_install_property(obj_class, PROP_ALIGN,
 			g_param_spec_int("align",
 					"Alignment of the panel",
-					"The panel's alignment. Default: BOTTOM",
+					"The panel's alignment.",
 					PC_ALIGN_0, PC_ALIGN_LAST,
-					PC_ALIGN_BOTTOM,
+					PC_PANEL_DEFAULT_ALIGN,
 					G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
 	g_object_class_install_property(obj_class, PROP_WIDTH,
 			g_param_spec_float("width",
 					"The panel's width",
 					"The panel's width, relativ to the width of screen in "
-							"range 0.0f..1.0f. Default: 0.98f",
+							"range 0.0f..1.0f.",
 					0.0f, 1.0f,
-					0.98f,
+					PC_PANEL_DEFAULT_WIDTH,
 					G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
 	g_object_class_install_property(obj_class, PROP_HEIGHT,
 			g_param_spec_int("height",
 					"The panel's height",
-					"The panel's height in pixels. Default: 24",
+					"The panel's height in pixels.",
 					0, G_MAXINT,
-					24,
+					PC_PANEL_DEFAULT_HEIGHT,
 					G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
 	g_object_class_install_property(obj_class, PROP_STRUT_ENABLED,
 			g_param_spec_boolean("strut-enabled",
 					"if the panel shall set a strut",
-					"Holds if the panel shall set a strut. Default: TRUE",
-					TRUE,
+					"Holds if the panel shall set a strut.",
+					PC_PANEL_DEFAULT_STRUT_ENABLED,
 					G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
 
 	g_type_class_add_private(obj_class, sizeof(PcPanelPrivate));

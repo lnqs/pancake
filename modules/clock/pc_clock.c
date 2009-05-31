@@ -29,6 +29,8 @@
 #define PC_CLOCK_GET_CLASS \
 		(G_TYPE_INSTANCE_GET_CLASS((obj), PC_TYPE_CLOCK, PcClockClass))
 
+#define PC_CLOCK_DEFAULTFORMAT "%H:%M"
+
 typedef struct PcClock
 {
 	GtkLabel parent;
@@ -113,15 +115,16 @@ static void pc_clock_class_init(PcClockClass* class)
 	g_object_class_install_property(obj_class, PROP_FORMAT,
 			g_param_spec_string("format",
 					"Display format",
-					"The format to show the time in. Default: %H:%M",
-					"%H:%M",
+					"The format to show the time in. Default: "
+					PC_CLOCK_DEFAULTFORMAT,
+					PC_CLOCK_DEFAULTFORMAT,
 					G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
 }
 
 static void pc_clock_init(PcClock* clock)
 {
 	if(!clock->format)
-		clock->format = g_strdup("%H:%M");
+		clock->format = g_strdup(PC_CLOCK_DEFAULTFORMAT);
 
 	g_timeout_add_seconds(1, pc_clock_update, clock);
 }
@@ -146,7 +149,7 @@ static GtkWidget* pc_clock_instantiate(Config* config)
 }
 
 static ConfigOption pc_clock_options[] = {
-	CFG_STR("format", "%H:%M", CFGF_NONE),
+	CFG_STR("format", PC_CLOCK_DEFAULTFORMAT, CFGF_NONE),
 	CFG_END()
 };
 

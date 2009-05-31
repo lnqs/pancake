@@ -141,6 +141,7 @@ static void pc_defaulttheme_style_init(PcDefaultthemeStyle* style)
 	style->rounded_top = TRUE;
 	style->rounded_bottom = FALSE;
 	style->bg_alpha = 0.75;
+
 }
 
 static GtkStyle* pc_defaulttheme_style_new()

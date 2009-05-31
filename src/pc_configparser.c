@@ -150,11 +150,15 @@ static ConfigOption* pc_configparser_build_optlist()
 	opts[i++] = (ConfigOption)CFG_STR("theme", NULL, CFGF_NONE);
 	opts[i++] = (ConfigOption)CFG_STR_LIST("widgets", "", CFGF_NONE);
 
-	opts[i++] = (ConfigOption)CFG_INT("height", 24, CFGF_NONE);
-	opts[i++] = (ConfigOption)CFG_FLOAT("width", 0.98f, CFGF_NONE);
-	opts[i++] = (ConfigOption)CFG_INT_CB("align", PC_ALIGN_BOTTOM, CFGF_NONE,
+	opts[i++] = (ConfigOption)CFG_INT("height",
+			PC_PANEL_DEFAULT_HEIGHT, CFGF_NONE);
+	opts[i++] = (ConfigOption)CFG_FLOAT("width",
+			PC_PANEL_DEFAULT_WIDTH, CFGF_NONE);
+	opts[i++] = (ConfigOption)CFG_INT_CB("align",
+			PC_PANEL_DEFAULT_ALIGN, CFGF_NONE,
 			&pc_configparser_parse_align);
-	opts[i++] = (ConfigOption)CFG_BOOL("strut", 1, CFGF_NONE);
+	opts[i++] = (ConfigOption)CFG_BOOL("strut",
+			PC_PANEL_DEFAULT_STRUT_ENABLED, CFGF_NONE);
 
 	const GList* cur = pc_modloader_get_widgets();
 	do

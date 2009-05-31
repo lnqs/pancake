@@ -97,6 +97,8 @@ static void pc_style_class_init(PcStyleClass* class)
 
 static void pc_style_init(PcStyle* style)
 {
+	/*TODO: This sucks. Replace it with something that'll work */
+	GTK_STYLE(style)->ythickness = -5;
 }
 
 static void pc_style_apply_callback(GtkWidget* widget, gpointer data)
