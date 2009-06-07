@@ -19,6 +19,7 @@
  * eggtraymanager, which is originally licensed unter the LGPL */
 
 #include <pc_module.h>
+#include <pc_misc.h>
 
 #ifdef GDK_WINDOWING_X11
 #include <X11/X.h>
@@ -103,14 +104,15 @@ static GdkFilterReturn pc_trayarea_handle_event(PcTrayarea* trayarea,
 			pc_trayarea_handle_dock_request(trayarea, xevent);
 			return GDK_FILTER_REMOVE;
 
-		/* TODO: Do we need this?: */
-		/*case SYSTEM_TRAY_BEGIN_MESSAGE:
-			pc_trayarea_handle_begin_message(trayarea, xevent);
+		case SYSTEM_TRAY_BEGIN_MESSAGE:
+			pc_bugdialog("%s", "trayarea-plugin received event of type "
+					"'SYSTEM_TRAY_BEGIN_MESSAGE'");
 			return GDK_FILTER_REMOVE;
 
 		case SYSTEM_TRAY_CANCEL_MESSAGE:
-			pc_trayarea_handle_cancel_message(trayarea, xevent);
-			return GDK_FILTER_REMOVE;*/
+			pc_bugdialog("%s", "trayarea-plugin received event of type "
+					"'SYSTEM_TRAY_CANCEL_MESSAGE'");
+			return GDK_FILTER_REMOVE;
 
 		default:
 			break;
@@ -135,10 +137,7 @@ static GdkFilterReturn pc_trayarea_window_filter(GdkXEvent* xev,
 		}
 		else if(xevent->xclient.message_type == priv->message_data_atom)
 		{
-			g_debug("Trayarea received a message");
-			/* TODO: Do we need this? */
-			/*pc_trayarea_handle_message_data(trayarea,
-					(XClientMessageEvent*)xevent);*/
+			pc_bugdialog("trayarea-module received an xmessage");
 			return GDK_FILTER_REMOVE;
 		}
 	}

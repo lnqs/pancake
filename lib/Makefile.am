@@ -13,7 +13,8 @@ libpancakeinclude_HEADERS = \
 	pc_types.h
 
 libpancake_la_SOURCES = \
-	pc_style.c
+	pc_style.c \
+	pc_misc.c
 
 libpancake_la_LDFLAGS = \
 	$(gtk_LIBS) \

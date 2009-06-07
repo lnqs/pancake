@@ -26,8 +26,6 @@
 #include "pc_style.h"
 
 /* TODO: Add help for the modules */
-/* TODO: Make defaultpaddig between widgets smaller */
-/* TODO: Make panel lesser in height, per default? */
 
 const gchar* pc_program_invocation_name;
 GtkStyle* pc_theme = NULL;
@@ -59,8 +57,6 @@ int main(int argc, char** argv)
 {
 	pc_program_invocation_name = argv[0];
 
-	/*g_log_set_handler(NULL, G_LOG_LEVEL_MASK |
-			G_LOG_FLAG_FATAL | G_LOG_FLAG_RECURSION, &pc_log_handler, NULL);*/
 	g_log_set_default_handler(&pc_log_handler, NULL);
 	
 	if(!pc_sighandler_init())

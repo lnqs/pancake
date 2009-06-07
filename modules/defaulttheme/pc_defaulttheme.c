@@ -137,6 +137,9 @@ static void pc_defaulttheme_style_init(PcDefaultthemeStyle* style)
 	GTK_STYLE(style)->bg[GTK_STATE_PRELIGHT].red = 0.2f   * 65535;
 	GTK_STYLE(style)->bg[GTK_STATE_PRELIGHT].green = 0.2f * 65535;
 	GTK_STYLE(style)->bg[GTK_STATE_PRELIGHT].blue = 0.2f  * 65535;
+	
+	GTK_STYLE(style)->xthickness = 0;
+	GTK_STYLE(style)->ythickness = 0;
 
 	style->rounded_top = TRUE;
 	style->rounded_bottom = FALSE;

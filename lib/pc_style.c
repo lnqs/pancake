@@ -83,7 +83,7 @@ static void pc_style_class_init(PcStyleClass* class)
 			g_param_spec_int("widget-padding",
 					"Padding between widgets",
 					"The padding between widgets in the panel. Default: 4",
-					0, G_MAXINT, 4,
+					0, G_MAXINT, 2,
 					G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
 
 	g_object_class_install_property(obj_class, PROP_BORDER_PADDING,
@@ -91,14 +91,12 @@ static void pc_style_class_init(PcStyleClass* class)
 					"Padding between panel's borders and widgets",
 					"The padding between the panels's left and right borders "
 					"and the widgets within. Default: 4",
-					0, G_MAXINT, 4,
+					0, G_MAXINT, 2,
 					G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
 }
 
 static void pc_style_init(PcStyle* style)
 {
-	/*TODO: This sucks. Replace it with something that'll work */
-	GTK_STYLE(style)->ythickness = -5;
 }
 
 static void pc_style_apply_callback(GtkWidget* widget, gpointer data)
@@ -122,7 +120,7 @@ guint pc_style_get_widget_padding(GtkStyle* style)
 {
 	if(PC_IS_STYLE(style))
 	{
-		GValue value = {0, };
+		GValue value = { 0, };
 		g_value_init(&value, G_TYPE_INT);
 		g_object_get_property(G_OBJECT(style), "widget-padding", &value);
 		guint padding = g_value_get_int(&value);
@@ -137,7 +135,7 @@ guint pc_style_get_border_padding(GtkStyle* style)
 {
 	if(PC_IS_STYLE(style))
 	{
-		GValue value = {0, };
+		GValue value = { 0, };
 		g_value_init(&value, G_TYPE_INT);
 		g_object_get_property(G_OBJECT(style), "border-padding", &value);
 		guint padding = g_value_get_int(&value);

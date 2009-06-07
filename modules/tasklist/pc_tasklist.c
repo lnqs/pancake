@@ -65,17 +65,6 @@ static const PcWidgetInfo pc_tasklist_info = {
 gboolean pc_module_init(const PcModuleCallbacks* callbacks)
 {
 	callbacks->register_widget(&pc_tasklist_info);
-
-	/* TODO: */
-	/*gtk_rc_parse_string(
-			"style \"pc-tasklist-button-style\" {\n"
-			"	xthickness = 0\n"
-			"	ythickness = 0\n"
-			"	GtkButton::inner-border = {0, 0, 0, 0}\n"
-			"}\n"
-			"widget \"*tasklist-button*\" style : "
-					"highest \"pc-tasklist-button-style\"");*/
-
 	return TRUE;
 }
 

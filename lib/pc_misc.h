@@ -28,5 +28,13 @@ extern const gchar* pc_program_invocation_name;
    unless you're about to change configfile-parsing */
 extern GtkStyle* pc_theme;
 
+/**
+ * @brief Prints a dialog asking the user to fill a bugreport
+ *
+ * @param message_format the messageformat in printf-style
+ * @param ... the data to print as in printf
+ **/
+void pc_bugdialog(const gchar* message_format, ...);
+
 #endif
 
