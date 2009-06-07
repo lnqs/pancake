@@ -47,5 +47,15 @@ typedef cfg_t Config;
  **/
 typedef cfg_opt_t ConfigOption;
 
+/**
+ * @brief Color-datatype
+ **/
+typedef struct PcColor
+{
+	gfloat r;
+	gfloat g;
+	gfloat b;
+} PcColor;
+
 #endif
 

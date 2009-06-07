@@ -15,8 +15,6 @@
  * with this program; if not, see <http://www.gnu.org/licenses/>.
  **/
 
-/* TODO: make this looking good o.O */
-
 #include <gtk/gtk.h>
 #include <pc_module.h>
 #include <pc_style.h>
@@ -114,37 +112,8 @@ static void pc_defaulttheme_style_class_init(PcDefaultthemeStyleClass* class)
 
 static void pc_defaulttheme_style_init(PcDefaultthemeStyle* style)
 {
-	GTK_STYLE(style)->fg[GTK_STATE_NORMAL].red = 0.6f     * 65535;
-	GTK_STYLE(style)->fg[GTK_STATE_NORMAL].green = 0.6f   * 65535;
-	GTK_STYLE(style)->fg[GTK_STATE_NORMAL].blue = 0.6f    * 65535;
-
-	GTK_STYLE(style)->bg[GTK_STATE_NORMAL].red = 0.2f     * 65535;
-	GTK_STYLE(style)->bg[GTK_STATE_NORMAL].green = 0.2f   * 65535;
-	GTK_STYLE(style)->bg[GTK_STATE_NORMAL].blue = 0.2f    * 65535;
-
-	GTK_STYLE(style)->fg[GTK_STATE_ACTIVE].red = 0.9f     * 65535;
-	GTK_STYLE(style)->fg[GTK_STATE_ACTIVE].green = 0.9f   * 65535;
-	GTK_STYLE(style)->fg[GTK_STATE_ACTIVE].blue = 0.9f    * 65535;
-
-	GTK_STYLE(style)->bg[GTK_STATE_ACTIVE].red = 0.2f     * 65535;
-	GTK_STYLE(style)->bg[GTK_STATE_ACTIVE].green = 0.2f   * 65535;
-	GTK_STYLE(style)->bg[GTK_STATE_ACTIVE].blue = 0.2f    * 65535;
-
-	GTK_STYLE(style)->fg[GTK_STATE_PRELIGHT].red = 1.0f   * 65535;
-	GTK_STYLE(style)->fg[GTK_STATE_PRELIGHT].green = 1.0f * 65535;
-	GTK_STYLE(style)->fg[GTK_STATE_PRELIGHT].blue = 1.0f  * 65535;
-
-	GTK_STYLE(style)->bg[GTK_STATE_PRELIGHT].red = 0.2f   * 65535;
-	GTK_STYLE(style)->bg[GTK_STATE_PRELIGHT].green = 0.2f * 65535;
-	GTK_STYLE(style)->bg[GTK_STATE_PRELIGHT].blue = 0.2f  * 65535;
-	
 	GTK_STYLE(style)->xthickness = 0;
 	GTK_STYLE(style)->ythickness = 0;
-
-	style->rounded_top = TRUE;
-	style->rounded_bottom = FALSE;
-	style->bg_alpha = 0.75;
-
 }
 
 static GtkStyle* pc_defaulttheme_style_new()
@@ -152,13 +121,79 @@ static GtkStyle* pc_defaulttheme_style_new()
 	return GTK_STYLE(g_object_new(PC_TYPE_DEFAULTTHEME_STYLE, NULL));
 }
 
-static GtkStyle* pc_defaulttheme_instantiate(Config* options)
+static PcColor pc_defaulttheme_config_to_color(
+		Config* options, const gchar* key)
 {
-	return pc_defaulttheme_style_new();
+	PcColor color = { 0, };
+	
+	if(cfg_size(options, key) == 3)
+	{
+		color.r = cfg_getnfloat(options, key, 0);
+		color.g = cfg_getnfloat(options, key, 1);
+		color.b = cfg_getnfloat(options, key, 2);
+	}
+	else
+		g_warning("Invalid format of '%s'", key);
+
+	return color;
 }
 
-/* TODO: Add options to change colors, rounded edges and alpha */
+static GtkStyle* pc_defaulttheme_instantiate(Config* options)
+{
+	PcStyle* style = PC_STYLE(pc_defaulttheme_style_new());
+
+	PcColor fg_normal = pc_defaulttheme_config_to_color(options, "fg_normal");
+	GTK_STYLE(style)->fg[GTK_STATE_NORMAL].red = fg_normal.r       * 65535;
+	GTK_STYLE(style)->fg[GTK_STATE_NORMAL].green = fg_normal.g     * 65535;
+	GTK_STYLE(style)->fg[GTK_STATE_NORMAL].blue = fg_normal.b      * 65535;
+
+	PcColor bg_normal = pc_defaulttheme_config_to_color(options, "bg_normal");
+	GTK_STYLE(style)->bg[GTK_STATE_NORMAL].red = bg_normal.r       * 65535;
+	GTK_STYLE(style)->bg[GTK_STATE_NORMAL].green = bg_normal.g     * 65535;
+	GTK_STYLE(style)->bg[GTK_STATE_NORMAL].blue = bg_normal.b      * 65535;
+
+	PcColor fg_active = pc_defaulttheme_config_to_color(options, "fg_active");
+	GTK_STYLE(style)->fg[GTK_STATE_ACTIVE].red = fg_active.r       * 65535;
+	GTK_STYLE(style)->fg[GTK_STATE_ACTIVE].green = fg_active.g     * 65535;
+	GTK_STYLE(style)->fg[GTK_STATE_ACTIVE].blue = fg_active.b      * 65535;
+
+	PcColor bg_active = pc_defaulttheme_config_to_color(options, "bg_active");
+	GTK_STYLE(style)->bg[GTK_STATE_ACTIVE].red = bg_active.r       * 65535;
+	GTK_STYLE(style)->bg[GTK_STATE_ACTIVE].green = bg_active.g     * 65535;
+	GTK_STYLE(style)->bg[GTK_STATE_ACTIVE].blue = bg_active.b      * 65535;
+
+	PcColor fg_prelight = pc_defaulttheme_config_to_color(
+			options, "fg_prelight");
+	GTK_STYLE(style)->fg[GTK_STATE_PRELIGHT].red = fg_prelight.r   * 65535;
+	GTK_STYLE(style)->fg[GTK_STATE_PRELIGHT].green = fg_prelight.g * 65535;
+	GTK_STYLE(style)->fg[GTK_STATE_PRELIGHT].blue = fg_prelight.b  * 65535;
+
+	PcColor bg_prelight = pc_defaulttheme_config_to_color(
+			options, "bg_prelight");
+	GTK_STYLE(style)->bg[GTK_STATE_PRELIGHT].red = bg_prelight.r   * 65535;
+	GTK_STYLE(style)->bg[GTK_STATE_PRELIGHT].green = bg_prelight.g * 65535;
+	GTK_STYLE(style)->bg[GTK_STATE_PRELIGHT].blue = bg_prelight.b  * 65535;
+
+	PC_DEFAULTTHEME_STYLE(style)->rounded_top = cfg_getbool(
+			options, "rounded_top");
+	PC_DEFAULTTHEME_STYLE(style)->rounded_bottom = cfg_getbool(
+			options, "rounded_bottom");
+	PC_DEFAULTTHEME_STYLE(style)->bg_alpha = cfg_getfloat(
+			options, "bg_alpha");
+
+	return GTK_STYLE(style);
+}
+
 static ConfigOption pc_defaulttheme_options[] = {
+	CFG_BOOL("rounded_top", TRUE, CFGF_NONE),
+	CFG_BOOL("rounded_bottom", FALSE, CFGF_NONE),
+	CFG_FLOAT_LIST("fg_normal", "{0.6, 0.6, 0.6}", CFGF_NONE),
+	CFG_FLOAT_LIST("bg_normal", "{0.2, 0.2, 0.2}", CFGF_NONE),
+	CFG_FLOAT_LIST("fg_active", "{0.9, 0.9, 0.9}", CFGF_NONE),
+	CFG_FLOAT_LIST("bg_active", "{0.2, 0.2, 0.2}", CFGF_NONE),
+	CFG_FLOAT_LIST("fg_prelight", "{1.0, 1.0, 1.0}", CFGF_NONE),
+	CFG_FLOAT_LIST("bg_prelight", "{0.2, 0.2, 0.2}", CFGF_NONE),
+	CFG_FLOAT("bg_alpha", 0.75f, CFGF_NONE),
 	CFG_END()
 };
 
