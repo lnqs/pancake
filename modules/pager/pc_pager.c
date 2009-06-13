@@ -55,9 +55,15 @@ static ConfigOption pc_pager_options[] = {
 	CFG_END()
 };
 
+static void pc_pager_print_help()
+{
+	printf("TODO\n");
+}
+
 static const PcWidgetInfo pc_pager_info = {
 	.name = "pager",
 	.instantiate = &pc_pager_instantiate,
+	.print_help = &pc_pager_print_help,
 	.options = pc_pager_options
 };
 

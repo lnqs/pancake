@@ -153,9 +153,15 @@ static ConfigOption pc_clock_options[] = {
 	CFG_END()
 };
 
+static void pc_clock_print_help()
+{
+	printf("TODO\n");
+}
+
 static const PcWidgetInfo pc_clock_info = {
 	.name = "clock",
 	.instantiate = &pc_clock_instantiate,
+	.print_help = &pc_clock_print_help,
 	.options = pc_clock_options
 };
 

@@ -25,11 +25,15 @@
  **/
 typedef struct PcCommandlineOpts
 {
-	//! Path to the configuration, if specified by user, NULL otherwise
+	/* Path to the configuration, if specified by user, NULL otherwise */
 	const gchar* config_path;
 
-	//! Path to the modules, if specified by user, NULL otherwise
+	/* Path to the modules, if specified by user, NULL otherwise */
 	const gchar* module_path;
+
+	/* set to TRUE if a help for the modules shall be printed instead of
+	   a normal start of pancake */ 
+	gboolean module_help;
 } PcCommandlineOpts;
 
 /* Holds the program's name as in argv[0].

@@ -32,6 +32,10 @@ typedef struct PcWidgetInfo
 	//! pointer to a function suitable to create an instance of the widget
 	GtkWidget* (*instantiate)(Config* config);
 
+	//! pointer to a function the program may call to have a help printed
+	//! to stdout
+	void (*print_help)();
+
 	//! libconfuse-conform options that may be set for the widget
 	ConfigOption* options;
 } PcWidgetInfo;
@@ -49,6 +53,10 @@ typedef struct PcThemeInfo
 	//! pointer to a function suitable to create an instance of the
 	//! theme's style
 	GtkStyle* (*instantiate)(Config* config);
+	
+	//! pointer to a function the program may call to have a help printed
+	//! to stdout
+	void (*print_help)();
 
 	//! libconfuse-conform options that may be set for the theme
 	ConfigOption* options;

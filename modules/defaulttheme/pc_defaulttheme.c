@@ -133,7 +133,7 @@ static PcColor pc_defaulttheme_config_to_color(
 		color.b = cfg_getnfloat(options, key, 2);
 	}
 	else
-		g_warning("Invalid format of '%s'", key);
+		g_critical("Invalid format of '%s'", key);
 
 	return color;
 }
@@ -197,9 +197,15 @@ static ConfigOption pc_defaulttheme_options[] = {
 	CFG_END()
 };
 
+void pc_defaulttheme_print_help()
+{
+	printf("TODO\n");
+}
+
 static const PcThemeInfo pc_defaulttheme_info = {
 	.name = "defaulttheme",
 	.instantiate = &pc_defaulttheme_instantiate,
+	.print_help = &pc_defaulttheme_print_help,
 	.options = pc_defaulttheme_options
 };
 

@@ -70,26 +70,31 @@ int main(int argc, char** argv)
 	if(!pc_modloader_init(cmdline_opts))
 		return 2;
 	
-	GtkWidget* panel = pc_panel_new();
-
-	if(!pc_configparser_parse((PcPanel*)panel, cmdline_opts))
+	if(cmdline_opts->module_help)
+		pc_modloader_print_modulehelp();
+	else
 	{
-		pc_modloader_cleanup();
-		return 2;
+		GtkWidget* panel = pc_panel_new();
+
+		if(!pc_configparser_parse((PcPanel*)panel, cmdline_opts))
+		{
+			pc_modloader_cleanup();
+			return 2;
+		}
+
+		pc_style_apply(pc_theme, panel); /* sets style for everything created
+											already recursivly */
+		g_signal_add_emission_hook(g_signal_lookup("realize", GTK_TYPE_WIDGET),
+				0, &pc_set_style_hook, pc_theme, NULL); /*will set style for
+														  everything that'll be 
+														  created in future */
+		pc_panel_set_border_padding(PC_PANEL(panel),
+				pc_style_get_border_padding(pc_theme));
+
+		gtk_widget_show_all(panel);
+		gtk_main();
+		gtk_widget_destroy(panel);
 	}
-
-	pc_style_apply(pc_theme, panel); /* sets style for everything created
-									    already recursivly */
-	g_signal_add_emission_hook(g_signal_lookup("realize", GTK_TYPE_WIDGET),
-			0, &pc_set_style_hook, pc_theme, NULL); /* will set style for
-													   everything that'll be 
-													   created in future */
-	pc_panel_set_border_padding(PC_PANEL(panel),
-			pc_style_get_border_padding(pc_theme));
-
-	gtk_widget_show_all(panel);
-	gtk_main();
-	gtk_widget_destroy(panel);
 	
 	pc_modloader_cleanup();
 

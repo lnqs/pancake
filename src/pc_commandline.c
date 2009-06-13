@@ -32,6 +32,12 @@ static GOptionEntry cmdline_opts[] =
 			"Path to configfile to use", "PATH" },
 	{ "modulepath", 'm', 0, G_OPTION_ARG_FILENAME,
 			&pc_commandline_opts.module_path, "Path to modules", "PATH" },
+	{ "modulehelp", 'd', 0, G_OPTION_ARG_NONE,
+			&pc_commandline_opts.module_help,
+                            "Prints a description of all modules and their\n"
+"                            configuration-options in search-path to stdout.\n"
+"                            The output will be a valid configurationfile and\n"
+"                            can be used as template for such one." },
 	{ NULL }
 };
 

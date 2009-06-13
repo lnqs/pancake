@@ -143,7 +143,7 @@ static GdkFilterReturn pc_trayarea_window_filter(GdkXEvent* xev,
 	}
 	else if(xevent->type == SelectionClear)
 	{
-		g_warning("Trayarea lost selection-ownership");
+		g_critical("Trayarea lost selection-ownership");
 		pc_trayarea_unmanage(trayarea);
 	}
 
@@ -254,6 +254,11 @@ static GtkWidget* pc_trayarea_instantiate(Config* config)
 	return pc_trayarea_new();
 }
 
+static void pc_trayarea_print_help()
+{
+	printf("TODO\n");
+}
+
 static ConfigOption pc_trayarea_options[] = {
 	CFG_END()
 };
@@ -261,6 +266,7 @@ static ConfigOption pc_trayarea_options[] = {
 static const PcWidgetInfo pc_trayarea_info = {
 	.name = "trayarea",
 	.instantiate = &pc_trayarea_instantiate,
+	.print_help = &pc_trayarea_print_help,
 	.options = pc_trayarea_options
 };
 

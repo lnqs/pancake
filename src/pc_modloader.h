@@ -34,9 +34,10 @@ gboolean pc_modloader_init(const PcCommandlineOpts* cmdline_opts);
  * @brief Loads a module
  *
  * @param name the name of the module to load
+ * @param silent if set to TRUE, messages about errors are supressed
  * @return TRUE on success, FALSE otherwise
  **/
-gboolean pc_modloader_load_module(const gchar* name);
+gboolean pc_modloader_load_module(const gchar* name, gboolean silent);
 
 /**
  * @brief Cleans up the module-subsystem
@@ -82,6 +83,11 @@ const GList* pc_modloader_get_widgets();
  * @return the list of instantiable themes
  **/
 const GList* pc_modloader_get_themes();
+
+/**
+ * @todo docs
+ **/
+void pc_modloader_print_modulehelp();
 
 #endif
 

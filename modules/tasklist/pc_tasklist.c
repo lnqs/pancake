@@ -49,6 +49,11 @@ static int pc_tasklist_parse_grouping(
 	return 0;
 }
 
+static void pc_tasklist_print_help()
+{
+	printf("TODO\n");
+}
+
 static ConfigOption pc_tasklist_options[] = {
 	CFG_BOOL("all_workspaces", TRUE, CFGF_NONE),
 	CFG_INT_CB("grouping", WNCK_TASKLIST_NEVER_GROUP, CFGF_NONE,
@@ -59,6 +64,7 @@ static ConfigOption pc_tasklist_options[] = {
 static const PcWidgetInfo pc_tasklist_info = {
 	.name = "tasklist",
 	.instantiate = &pc_tasklist_instantiate,
+	.print_help = &pc_tasklist_print_help,
 	.options = pc_tasklist_options
 };
 

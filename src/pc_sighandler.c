@@ -136,7 +136,7 @@ static gboolean pc_sighandler_register_signals()
 
 gboolean pc_sighandler_init()
 {
-	GError* error = 0;
+	GError* error = NULL;
 	
 	if(!pc_sighandler_create_sigpipe() || !pc_sighandler_register_signals())
 		return FALSE;
