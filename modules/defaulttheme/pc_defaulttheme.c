@@ -199,7 +199,40 @@ static ConfigOption pc_defaulttheme_options[] = {
 
 void pc_defaulttheme_print_help()
 {
-	printf("TODO\n");
+	printf(
+"# This is the standardtheme of pancake\n"
+"defaulttheme mytheme\n"
+"{\n"
+"    # set to 'true' to have the upper edges of the panel rounded\n"
+"    rounded_top = true\n"
+"\n"
+"    # set to 'true' to have the bottom edges of the panel rounded\n"
+"    rounded_bottom = false\n"
+"\n"
+"    # The foreground-color to use, as red-, green- and blue-values in range\n"
+"    # 0.0 to 1.0.\n"
+"    fg_normal = { 0.6, 0.6, 0.6 }\n"
+"\n"
+"    # The background-color to use\n"
+"    bg_normal = { 0.2, 0.2, 0.2 }\n"
+"\n"
+"    # The foreground-color to use for active widgets\n"
+"    fg_active = { 0.9, 0.9, 0.9 }\n"
+"\n"
+"    # The background-color to use for active widgets\n"
+"    bg_active = { 0.2, 0.2, 0.2 }\n"
+"\n"
+"    # The foreground-color to use for prelighted widgets\n"
+"    fg_prelight = { 1.0, 1.0, 1.0 }\n"
+"\n"
+"    # The background-color to use for prelighted widgets\n"
+"    bg_prelight = { 0.2, 0.2, 0.2 }\n"
+"\n"
+"    # alpha-value in range 0.0 to 1.0 for the panel's background\n"
+"    bg_alpha = 0.75\n"
+"}\n"
+"\n"
+	);
 }
 
 static const PcThemeInfo pc_defaulttheme_info = {

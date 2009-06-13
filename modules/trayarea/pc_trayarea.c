@@ -256,7 +256,14 @@ static GtkWidget* pc_trayarea_instantiate(Config* config)
 
 static void pc_trayarea_print_help()
 {
-	printf("TODO\n");
+	printf(
+"# the trayarea widget displays an area, where program can paint icons to\n"
+"trayarea mytrayarea\n"
+"{\n"
+"    # this widget doesn't have any options\n"
+"}\n"
+"\n"
+	);
 }
 
 static ConfigOption pc_trayarea_options[] = {

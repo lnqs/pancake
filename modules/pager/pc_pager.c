@@ -57,7 +57,22 @@ static ConfigOption pc_pager_options[] = {
 
 static void pc_pager_print_help()
 {
-	printf("TODO\n");
+	printf(
+"# the pager widget displays the workspaces or the name of the active one\n"
+"pager mypager\n"
+"{\n"
+"    # The pager's mode, set to 'name' or 'content'\n"
+"    mode = content\n"
+"\n"
+"    # set to 'true' to display all workspaces, to 'false' to display only\n"
+"    # the active one\n"
+"    all_workspaces = true\n"
+"\n"
+"    # sets the number of rows the pager is organized in\n"
+"    rows = 1\n"
+"}\n"
+"\n"
+	);
 }
 
 static const PcWidgetInfo pc_pager_info = {

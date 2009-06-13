@@ -25,7 +25,7 @@
 #include "pc_panel.h"
 #include "pc_style.h"
 
-/* TODO: Add help for the modules */
+/* TODO: Print errors as dialog */
 
 const gchar* pc_program_invocation_name;
 GtkStyle* pc_theme = NULL;

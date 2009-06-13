@@ -85,7 +85,7 @@ const GList* pc_modloader_get_widgets();
 const GList* pc_modloader_get_themes();
 
 /**
- * @todo docs
+ * @brief prints configurationfile-template to stdout
  **/
 void pc_modloader_print_modulehelp();
 

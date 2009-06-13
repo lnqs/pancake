@@ -359,6 +359,7 @@ void pc_modloader_print_modulehelp()
 "# enable it at the end of this file\n"
 "\n"
 "# Again, a list of all found widgets follows.\n"
+"\n"
 	);
 
 	cur = widgets;

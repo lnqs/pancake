@@ -51,7 +51,20 @@ static int pc_tasklist_parse_grouping(
 
 static void pc_tasklist_print_help()
 {
-	printf("TODO\n");
+	printf(
+"# The tasklist widget shows opened windows as buttons\n"
+"tasklist mytasklist\n"
+"{\n"
+"    # Sets if the tasks in the list should be grouped. May be 'never',\n"
+"    # 'always' or 'auto'\n"
+"    grouping = never\n"
+"\n"
+"    # Set to 'true' to include tasks of all workspaces to the list, to\n"
+"    # 'false' to have only the tasks of the current workspace displayed\n"
+"    all_workspaces = false\n"
+"}\n"
+"\n"
+	);
 }
 
 static ConfigOption pc_tasklist_options[] = {
