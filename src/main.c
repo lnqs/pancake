@@ -25,15 +25,59 @@
 #include "pc_panel.h"
 #include "pc_style.h"
 
-/* TODO: Print errors as dialog */
-
 const gchar* pc_program_invocation_name;
 GtkStyle* pc_theme = NULL;
 
-static void pc_log_handler(const gchar* log_domain,
+static void pc_log_handler_terminal(const gchar* log_domain,
 		GLogLevelFlags log_level, const gchar* message, gpointer data)
 {
 	g_print("%s: %s\n", pc_program_invocation_name, message);
+}
+
+static void pc_log_handler_dialog(const gchar* log_domain,
+		GLogLevelFlags log_level, const gchar* message, gpointer data)
+{
+	static gboolean inside = FALSE;
+
+	if(inside)
+	{
+		g_print("%s: %s\n", pc_program_invocation_name, message);
+		return;
+	}
+	
+	if(log_level & G_LOG_LEVEL_DEBUG)
+	{
+		g_print("%s: %s\n", pc_program_invocation_name, message);
+		return;
+	}
+
+	inside = TRUE;
+	
+	GtkMessageType type = G_LOG_LEVEL_INFO;
+	const gchar* caption = "Information";
+
+	if(log_level & G_LOG_LEVEL_WARNING)
+	{
+		type = GTK_MESSAGE_WARNING;
+		caption = "Warning";
+	}
+
+	if((log_level & G_LOG_LEVEL_CRITICAL) || (log_level & G_LOG_LEVEL_ERROR))
+	{
+		caption = "Error";
+		type = GTK_MESSAGE_ERROR;
+	}
+	
+	GtkWidget* dialog = gtk_message_dialog_new_with_markup(
+			NULL, 0, type, GTK_BUTTONS_CLOSE,
+			"<big><b>%s</b></big>", caption);
+	gtk_message_dialog_format_secondary_markup(
+			GTK_MESSAGE_DIALOG(dialog), "%s", message);
+	g_signal_connect_swapped(dialog, "response",
+			G_CALLBACK(gtk_widget_destroy), dialog);
+	gtk_dialog_run(GTK_DIALOG(dialog));
+
+	inside = FALSE;
 }
 
 static void pc_i18n_init()
@@ -57,7 +101,7 @@ int main(int argc, char** argv)
 {
 	pc_program_invocation_name = argv[0];
 
-	g_log_set_default_handler(&pc_log_handler, NULL);
+	g_log_set_default_handler(&pc_log_handler_terminal, NULL);
 	
 	if(!pc_sighandler_init())
 		return 2;
@@ -74,6 +118,7 @@ int main(int argc, char** argv)
 		pc_modloader_print_modulehelp();
 	else
 	{
+		g_log_set_default_handler(&pc_log_handler_dialog, NULL);
 		GtkWidget* panel = pc_panel_new();
 
 		if(!pc_configparser_parse((PcPanel*)panel, cmdline_opts))
