@@ -155,7 +155,17 @@ static ConfigOption pc_clock_options[] = {
 
 static void pc_clock_print_help()
 {
-	printf("TODO\n");
+	printf(
+"# The clock-widget displays a simple, digital clock.\n"
+"clock myclock\n"
+"{\n"
+"    # The format-option specifies the format the time is displayed in in\n"
+"    # syntax of strftime (see man strftime(3) for details of possible\n"
+"    # fields)\n"
+"    format = %%H:%%M\n"
+"}\n"
+"\n"
+	);
 }
 
 static const PcWidgetInfo pc_clock_info = {
