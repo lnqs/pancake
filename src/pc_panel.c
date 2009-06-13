@@ -76,7 +76,7 @@ static void pc_panel_align_size_pos(PcPanel* panel)
 	gint scr_h = gdk_screen_get_height(
 			gtk_window_get_screen(GTK_WINDOW(panel)));
 
-	gint w = scr_w * priv->width;
+	gint w = priv->width < 1.0f ? scr_w * priv->width : (gint)priv->width;
 	gint h = priv->height;
 
 	gint x;

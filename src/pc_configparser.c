@@ -39,9 +39,9 @@ static gint pc_configparser_validate_height(Config* cfg, ConfigOption* opt)
 static gint pc_configparser_validate_width(Config* cfg, ConfigOption* opt)
 {
 	gfloat val = cfg_opt_getnfloat(opt, 0);
-	if(val < 0.0f || val > 1.0f)
+	if(val < 0.0f)
 	{
-		cfg_error(cfg, "width must be between 0.0 and 1.0");
+		cfg_error(cfg, "width must be a positiv number");
         return -1;
 	}
 
@@ -125,7 +125,7 @@ static gboolean pc_configparser_load_modules(const gchar* filename)
 
 	for(int i = 0; i < cfg_size(cfg, "modules"); i++)
 	{
-		if(!pc_modloader_load_module(cfg_getnstr(cfg, "modules", i)))
+		if(!pc_modloader_load_module(cfg_getnstr(cfg, "modules", i), FALSE))
 			goto error;
 	}
 
