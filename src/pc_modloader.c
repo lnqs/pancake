@@ -386,9 +386,6 @@ void pc_modloader_print_modulehelp()
 "\n"
 );
 
-	/* TODO: theme line */
-	/* TODO: widgets line */
-
 	cur = files;
 	while(cur)
 	{
