@@ -29,9 +29,27 @@ const gchar* pc_program_invocation_name;
 GtkStyle* pc_theme = NULL;
 GtkStyle* gtk_style = NULL;
 
+static gboolean pc_log_message_to_ignore(
+		const gchar* log_domain, const gchar* message)
+{
+	/* wnck likes to omit warnings about unknown atoms, but shouldn't unless
+	   it's a _NET_*-atom, so we ignore the message */
+	if(!g_strcmp0(log_domain, "Wnck"))
+	{
+		if(g_str_has_prefix(message, "Unhandled action type ") &&
+				!g_str_has_prefix(message, "Unhandled action type _NET_"))
+			return TRUE;
+	}
+
+	return FALSE;
+}
+
 static void pc_log_handler_terminal(const gchar* log_domain,
 		GLogLevelFlags log_level, const gchar* message, gpointer data)
 {
+	if(pc_log_message_to_ignore(log_domain, message))
+		return;
+
 	g_print("%s: %s\n", pc_program_invocation_name, message);
 }
 
@@ -39,6 +57,9 @@ static void pc_log_handler_dialog(const gchar* log_domain,
 		GLogLevelFlags log_level, const gchar* message, gpointer data)
 {
 	static gboolean inside = FALSE;
+
+	if(pc_log_message_to_ignore(log_domain, message))
+		return;
 
 	if(inside)
 	{
