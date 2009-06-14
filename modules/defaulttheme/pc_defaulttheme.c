@@ -49,12 +49,36 @@ typedef struct PcDefaultthemeStyleClass
 
 G_DEFINE_TYPE(PcDefaultthemeStyle, pc_defaulttheme_style, PC_TYPE_STYLE);
 
+/* This function is taken from gtks gtkstyle.c */
+static void pc_defaulttheme_sanitize_size(GdkWindow* window,
+		gint* width, gint* height)
+{
+	if((*width == -1) && (*height == -1))
+		gdk_drawable_get_size(window, width, height);
+	else if(*width == -1)
+		gdk_drawable_get_size(window, width, NULL);
+	else if(*height == -1)
+		gdk_drawable_get_size(window, NULL, height);
+}
+
 static void pc_defaulttheme_draw_flat_box(GtkStyle* style, GdkWindow* window,
 		 GtkStateType state_type, GtkShadowType shadow_type,
 		 GdkRectangle* area, GtkWidget* widget, const gchar* detail,
 		 gint x, gint y, gint width, gint height)
 {
 	PcDefaultthemeStyle* self = PC_DEFAULTTHEME_STYLE(style);
+
+	pc_defaulttheme_sanitize_size(window, &width, &height);
+
+	gfloat alpha = self->bg_alpha;
+	/* I have absolutly no idea why it doesn't work for tooltips to have
+	   transparency here, but for now this should do it. */
+	/* TODO: find out why it doesn't work and fix it, or, at least, find out
+	         for what to check to set full alpha by this instead of having to
+	         check for the detail o.O */
+	if(!g_strcmp0(detail, "tooltip"))
+		alpha = 1.0f;
+
 	cairo_t* cr = gdk_cairo_create(window);
 	cairo_set_operator(cr, CAIRO_OPERATOR_SOURCE);
 
@@ -62,7 +86,7 @@ static void pc_defaulttheme_draw_flat_box(GtkStyle* style, GdkWindow* window,
 			(gfloat)style->bg[state_type].red   / 65535.0f,
 			(gfloat)style->bg[state_type].green / 65535.0f,
 			(gfloat)style->bg[state_type].blue  / 65535.0f,
-			self->bg_alpha);
+			alpha);
 	cairo_rectangle(cr, x, y, width, height);
 	cairo_fill(cr);
 
@@ -75,6 +99,18 @@ static void pc_defaulttheme_draw_box(GtkStyle* style, GdkWindow* window,
 		gint width, gint height)
 {
 	PcDefaultthemeStyle* self = PC_DEFAULTTHEME_STYLE(style);
+
+	pc_defaulttheme_sanitize_size(window, &width, &height);
+
+	gfloat alpha = self->bg_alpha;
+	/* I have absolutly no idea why it doesn't work for tooltips to have
+	   transparency here, but for now this should do it. */
+	/* TODO: find out why it doesn't work and fix it, or, at least, find out
+	         for what to check to set full alpha by this instead of having to
+	         check for the detail o.O */
+	if(!g_strcmp0(detail, "menu") || !g_strcmp0(detail, "menuitem"))
+		alpha = 1.0f;
+
 	cairo_t* cr = gdk_cairo_create(window);
 	cairo_set_operator(cr, CAIRO_OPERATOR_SOURCE);
 
@@ -82,16 +118,17 @@ static void pc_defaulttheme_draw_box(GtkStyle* style, GdkWindow* window,
 			(1.0f - (gfloat)style->bg[state_type].red)   / 65535.0f,
 			(1.0f - (gfloat)style->bg[state_type].green) / 65535.0f,
 			(1.0f - (gfloat)style->bg[state_type].blue) / 65535.0f,
-			(1.0f - self->bg_alpha));
+			1.0f);
 
-	cairo_rectangle(cr, x, y, width, height);
+	cairo_rectangle(cr, x + 1, y + 1, width - 2, height - 2);
 	cairo_stroke_preserve(cr);
 
 	cairo_set_source_rgba(cr,
 			(gfloat)style->bg[state_type].red   / 65535.0f,
 			(gfloat)style->bg[state_type].green / 65535.0f,
 			(gfloat)style->bg[state_type].blue  / 65535.0f,
-			self->bg_alpha);
+			alpha);
+
 	cairo_fill(cr);
 
 	cairo_destroy(cr);
