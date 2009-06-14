@@ -134,10 +134,52 @@ static void pc_defaulttheme_draw_box(GtkStyle* style, GdkWindow* window,
 	cairo_destroy(cr);
 }
 
+static void pc_defaulttheme_draw_hline(GtkStyle* style, GdkWindow* window,
+		GtkStateType state_type, GdkRectangle* area, GtkWidget* widget,
+		const gchar* detail, gint x1, gint x2, gint y)
+{
+	cairo_t* cr = gdk_cairo_create(window);
+	cairo_set_operator(cr, CAIRO_OPERATOR_SOURCE);
+
+	cairo_set_line_width(cr, 0.5f);
+	cairo_set_source_rgba(cr,
+			(1.0f - (gfloat)style->bg[state_type].red)   / 65535.0f,
+			(1.0f - (gfloat)style->bg[state_type].green) / 65535.0f,
+			(1.0f - (gfloat)style->bg[state_type].blue) / 65535.0f,
+			1.0f);
+
+	cairo_move_to(cr, x1, y);
+	cairo_line_to(cr, x2, y);
+	cairo_stroke(cr);
+
+	cairo_destroy(cr);
+}
+
+static void pc_defaulttheme_draw_vline(GtkStyle* style, GdkWindow* window,
+		GtkStateType state_type, GdkRectangle* area, GtkWidget* widget,
+		const gchar* detail, gint y1, gint y2, gint x)
+{
+	cairo_t* cr = gdk_cairo_create(window);
+	cairo_set_operator(cr, CAIRO_OPERATOR_SOURCE);
+
+	cairo_set_line_width(cr, 0.5f);
+	cairo_set_source_rgba(cr,
+			(1.0f - (gfloat)style->bg[state_type].red)   / 65535.0f,
+			(1.0f - (gfloat)style->bg[state_type].green) / 65535.0f,
+			(1.0f - (gfloat)style->bg[state_type].blue) / 65535.0f,
+			1.0f);
+
+	cairo_move_to(cr, x, y1);
+	cairo_line_to(cr, x, y2);
+	cairo_stroke(cr);
+
+	cairo_destroy(cr);
+}
+
 static void pc_defaulttheme_draw_panel(GtkStyle* style, GdkWindow* window,
-			GtkStateType state_type, GtkShadowType shadow_type,
-			GdkRectangle* area, GtkWidget* widget, const gchar* detail,
-			gint x, gint y, gint width, gint height)
+		GtkStateType state_type, GtkShadowType shadow_type,
+		GdkRectangle* area, GtkWidget* widget, const gchar* detail,
+		gint x, gint y, gint width, gint height)
 {
 	PcDefaultthemeStyle* self = PC_DEFAULTTHEME_STYLE(style);
 	
@@ -195,6 +237,8 @@ static void pc_defaulttheme_style_class_init(PcDefaultthemeStyleClass* class)
 
 	gtk_style_class->draw_box = &pc_defaulttheme_draw_box;
 	gtk_style_class->draw_flat_box = &pc_defaulttheme_draw_flat_box;
+	gtk_style_class->draw_hline = &pc_defaulttheme_draw_hline;
+	gtk_style_class->draw_vline = &pc_defaulttheme_draw_vline;
 
 	pc_style_class->draw_panel = &pc_defaulttheme_draw_panel;
 }
