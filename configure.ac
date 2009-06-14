@@ -1,6 +1,6 @@
 AC_PREREQ(2.59)
-AC_INIT([Pancake], [0.0.1])
-AM_INIT_AUTOMAKE([Pancake], [0.0.1])
+AC_INIT([Pancake], [0.1])
+AM_INIT_AUTOMAKE([Pancake], [0.1])
 AM_CONFIG_HEADER([config.h])
 
 AM_INIT_AUTOMAKE([foreign dist-bzip2])

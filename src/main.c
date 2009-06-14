@@ -27,6 +27,7 @@
 
 const gchar* pc_program_invocation_name;
 GtkStyle* pc_theme = NULL;
+GtkStyle* gtk_style = NULL;
 
 static void pc_log_handler_terminal(const gchar* log_domain,
 		GLogLevelFlags log_level, const gchar* message, gpointer data)
@@ -75,6 +76,7 @@ static void pc_log_handler_dialog(const gchar* log_domain,
 			GTK_MESSAGE_DIALOG(dialog), "%s", message);
 	g_signal_connect_swapped(dialog, "response",
 			G_CALLBACK(gtk_widget_destroy), dialog);
+	pc_gtk_widget_reset_style_recursive(dialog);
 	gtk_dialog_run(GTK_DIALOG(dialog));
 
 	inside = FALSE;
@@ -121,6 +123,9 @@ int main(int argc, char** argv)
 		g_log_set_default_handler(&pc_log_handler_dialog, NULL);
 		GtkWidget* panel = pc_panel_new();
 
+		gtk_style = GTK_STYLE(g_object_ref(
+				G_OBJECT(gtk_widget_get_style(panel))));
+
 		if(!pc_configparser_parse((PcPanel*)panel, cmdline_opts))
 		{
 			pc_modloader_cleanup();
@@ -142,6 +147,7 @@ int main(int argc, char** argv)
 	}
 	
 	pc_modloader_cleanup();
+	g_object_ref(G_OBJECT(gtk_style));
 
 	return 0;
 }

@@ -28,6 +28,9 @@ extern const gchar* pc_program_invocation_name;
    unless you're about to change configfile-parsing */
 extern GtkStyle* pc_theme;
 
+/* The original gtk style, to be applied to dialogs */
+extern GtkStyle* gtk_style;
+
 /**
  * @brief Prints a dialog asking the user to fill a bugreport
  *
@@ -35,6 +38,13 @@ extern GtkStyle* pc_theme;
  * @param ... the data to print as in printf
  **/
 void pc_bugdialog(const gchar* message_format, ...);
+
+/**
+ * @brief Resets a widgets style and it's children to GTKs default
+ * 
+ * @param widget the widget to reset
+ **/
+void pc_gtk_widget_reset_style_recursive(GtkWidget* widget);
 
 #endif
 

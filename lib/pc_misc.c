@@ -43,8 +43,31 @@ void pc_bugdialog(const gchar* message_format, ...)
 	g_signal_connect_swapped(dialog, "response",
 			G_CALLBACK(gtk_widget_destroy), dialog);
 
+	pc_gtk_widget_reset_style_recursive(dialog);
 	gtk_widget_show_all(dialog);
 
 	g_free(message);
+}
+
+static void pc_gtk_widget_reset_style_recursive_cb(
+		GtkWidget* widget, gpointer data)
+{
+	GtkStyle* style = GTK_STYLE(data);
+
+	if(!GTK_WIDGET_REALIZED(widget))
+		gtk_widget_realize(widget);
+
+	gtk_widget_set_style(widget, style);
+	if(GTK_IS_CONTAINER(widget))
+	{
+		GtkContainer* container = GTK_CONTAINER(widget);
+		gtk_container_forall(
+				container, &pc_gtk_widget_reset_style_recursive_cb, data);
+	}
+}
+
+void pc_gtk_widget_reset_style_recursive(GtkWidget* widget)
+{
+	pc_gtk_widget_reset_style_recursive_cb(widget, (gpointer)gtk_style);
 }
 
