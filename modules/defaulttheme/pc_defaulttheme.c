@@ -201,8 +201,6 @@ static void pc_defaulttheme_style_class_init(PcDefaultthemeStyleClass* class)
 
 static void pc_defaulttheme_style_init(PcDefaultthemeStyle* style)
 {
-	GTK_STYLE(style)->xthickness = 0;
-	GTK_STYLE(style)->ythickness = 0;
 }
 
 static GtkStyle* pc_defaulttheme_style_new()
