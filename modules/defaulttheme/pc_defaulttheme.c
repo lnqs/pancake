@@ -49,6 +49,54 @@ typedef struct PcDefaultthemeStyleClass
 
 G_DEFINE_TYPE(PcDefaultthemeStyle, pc_defaulttheme_style, PC_TYPE_STYLE);
 
+static void pc_defaulttheme_draw_flat_box(GtkStyle* style, GdkWindow* window,
+		 GtkStateType state_type, GtkShadowType shadow_type,
+		 GdkRectangle* area, GtkWidget* widget, const gchar* detail,
+		 gint x, gint y, gint width, gint height)
+{
+	PcDefaultthemeStyle* self = PC_DEFAULTTHEME_STYLE(style);
+	cairo_t* cr = gdk_cairo_create(window);
+	cairo_set_operator(cr, CAIRO_OPERATOR_SOURCE);
+
+	cairo_set_source_rgba(cr,
+			(gfloat)style->bg[state_type].red   / 65535.0f,
+			(gfloat)style->bg[state_type].green / 65535.0f,
+			(gfloat)style->bg[state_type].blue  / 65535.0f,
+			self->bg_alpha);
+	cairo_rectangle(cr, x, y, width, height);
+	cairo_fill(cr);
+
+	cairo_destroy(cr);
+}
+
+static void pc_defaulttheme_draw_box(GtkStyle* style, GdkWindow* window,
+		GtkStateType state_type, GtkShadowType shadow_type, GdkRectangle* area,
+		GtkWidget* widget, const gchar* detail, gint x, gint y,
+		gint width, gint height)
+{
+	PcDefaultthemeStyle* self = PC_DEFAULTTHEME_STYLE(style);
+	cairo_t* cr = gdk_cairo_create(window);
+	cairo_set_operator(cr, CAIRO_OPERATOR_SOURCE);
+
+	cairo_set_source_rgba(cr,
+			(1.0f - (gfloat)style->bg[state_type].red)   / 65535.0f,
+			(1.0f - (gfloat)style->bg[state_type].green) / 65535.0f,
+			(1.0f - (gfloat)style->bg[state_type].blue) / 65535.0f,
+			(1.0f - self->bg_alpha));
+
+	cairo_rectangle(cr, x, y, width, height);
+	cairo_stroke_preserve(cr);
+
+	cairo_set_source_rgba(cr,
+			(gfloat)style->bg[state_type].red   / 65535.0f,
+			(gfloat)style->bg[state_type].green / 65535.0f,
+			(gfloat)style->bg[state_type].blue  / 65535.0f,
+			self->bg_alpha);
+	cairo_fill(cr);
+
+	cairo_destroy(cr);
+}
+
 static void pc_defaulttheme_draw_panel(GtkStyle* style, GdkWindow* window,
 			GtkStateType state_type, GtkShadowType shadow_type,
 			GdkRectangle* area, GtkWidget* widget, const gchar* detail,
@@ -106,6 +154,10 @@ static void pc_defaulttheme_draw_panel(GtkStyle* style, GdkWindow* window,
 static void pc_defaulttheme_style_class_init(PcDefaultthemeStyleClass* class)
 {
 	PcStyleClass* pc_style_class = PC_STYLE_CLASS(class);
+	GtkStyleClass* gtk_style_class = GTK_STYLE_CLASS(class);
+
+	gtk_style_class->draw_box = &pc_defaulttheme_draw_box;
+	gtk_style_class->draw_flat_box = &pc_defaulttheme_draw_flat_box;
 
 	pc_style_class->draw_panel = &pc_defaulttheme_draw_panel;
 }
