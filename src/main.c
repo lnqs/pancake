@@ -45,7 +45,7 @@ static void pc_log_handler_dialog(const gchar* log_domain,
 		return;
 	}
 	
-	if(log_level & G_LOG_LEVEL_DEBUG)
+	if(log_level & G_LOG_LEVEL_DEBUG || log_domain != NULL)
 	{
 		g_print("%s: %s\n", pc_program_invocation_name, message);
 		return;

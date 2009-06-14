@@ -68,7 +68,7 @@ static void pc_tasklist_print_help()
 }
 
 static ConfigOption pc_tasklist_options[] = {
-	CFG_BOOL("all_workspaces", TRUE, CFGF_NONE),
+	CFG_BOOL("all_workspaces", FALSE, CFGF_NONE),
 	CFG_INT_CB("grouping", WNCK_TASKLIST_NEVER_GROUP, CFGF_NONE,
 			&pc_tasklist_parse_grouping),
 	CFG_END()
