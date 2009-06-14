@@ -76,7 +76,7 @@ static void pc_panel_align_size_pos(PcPanel* panel)
 	gint scr_h = gdk_screen_get_height(
 			gtk_window_get_screen(GTK_WINDOW(panel)));
 
-	gint w = priv->width < 1.0f ? scr_w * priv->width : (gint)priv->width;
+	gint w = priv->width <= 1.0f ? scr_w * priv->width : (gint)priv->width;
 	gint h = priv->height;
 
 	gint x;
@@ -299,9 +299,9 @@ static void pc_panel_class_init(PcPanelClass* class)
 	g_object_class_install_property(obj_class, PROP_WIDTH,
 			g_param_spec_float("width",
 					"The panel's width",
-					"The panel's width, relativ to the width of screen in "
-							"range 0.0f..1.0f.",
-					0.0f, 1.0f,
+					"The panel's width, either relativ to the width of screen "
+					"in range 0.0f..1.0f or as absolute pixel-value",
+					0.0f, G_MAXFLOAT,
 					PC_PANEL_DEFAULT_WIDTH,
 					G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
 	g_object_class_install_property(obj_class, PROP_HEIGHT,
