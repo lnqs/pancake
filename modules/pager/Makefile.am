@@ -11,6 +11,6 @@ libpager_la_SOURCES = \
 libpager_la_LDFLAGS = \
 	$(gtk_LIBS) \
 	$(libwnck_LIBS) \
-	$(top_srcdir)/lib/libpancake.la \
+	$(top_builddir)/lib/libpancake.la \
 	-rdynamic
 

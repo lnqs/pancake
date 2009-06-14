@@ -8,6 +8,6 @@ libdefaulttheme_la_SOURCES = pc_defaulttheme.c
 
 libdefaulttheme_la_LDFLAGS = \
 	$(gtk_LIBS) \
-	$(top_srcdir)/lib/libpancake.la \
+	$(top_builddir)/lib/libpancake.la \
 	-rdynamic 
 

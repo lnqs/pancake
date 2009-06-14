@@ -28,5 +28,5 @@ pancake_LDFLAGS = \
 	$(gtk_LIBS) \
 	$(libwnck_LIBS) \
 	$(libconfuse_LIBS) \
-	$(top_srcdir)/lib/libpancake.la
+	$(top_builddir)/lib/libpancake.la
 
