@@ -273,6 +273,10 @@ static GtkStyle* pc_defaulttheme_instantiate(Config* options)
 {
 	PcStyle* style = PC_STYLE(pc_defaulttheme_style_new());
 
+	const gchar* font = cfg_getstr(options, "font");
+	if(font)
+		GTK_STYLE(style)->font_desc = pango_font_description_from_string(font);
+
 	PcColor fg_normal = pc_defaulttheme_config_to_color(options, "fg_normal");
 	GTK_STYLE(style)->fg[GTK_STATE_NORMAL].red = fg_normal.r       * 65535;
 	GTK_STYLE(style)->fg[GTK_STATE_NORMAL].green = fg_normal.g     * 65535;
@@ -318,6 +322,7 @@ static GtkStyle* pc_defaulttheme_instantiate(Config* options)
 static ConfigOption pc_defaulttheme_options[] = {
 	CFG_BOOL("rounded_top", TRUE, CFGF_NONE),
 	CFG_BOOL("rounded_bottom", FALSE, CFGF_NONE),
+	CFG_STR("font", NULL, CFGF_NONE),
 	CFG_FLOAT_LIST("fg_normal", "{0.6, 0.6, 0.6}", CFGF_NONE),
 	CFG_FLOAT_LIST("bg_normal", "{0.2, 0.2, 0.2}", CFGF_NONE),
 	CFG_FLOAT_LIST("fg_active", "{0.9, 0.9, 0.9}", CFGF_NONE),
@@ -339,6 +344,9 @@ void pc_defaulttheme_print_help()
 "\n"
 "    # set to 'true' to have the bottom edges of the panel rounded\n"
 "    rounded_bottom = false\n"
+"\n"
+"    # The font to use\n"
+"    font = \"Sans 10\"\n"
 "\n"
 "    # The foreground-color to use, as red-, green- and blue-values in range\n"
 "    # 0.0 to 1.0.\n"
