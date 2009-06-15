@@ -1,7 +1,9 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
 <head>
+	<meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
 	<style type="text/css">
 	<!--
 	body {
@@ -56,6 +58,10 @@
 		text-decoration: none;
 	}
 
+	a img {
+		border: none;
+	}
+
 	.imgbox {
 		font-size: 75%;
 		text-align: center;
@@ -90,7 +96,7 @@
 </p>
 <p>
 	Pancake uses GTK+-2.0 (and libwnck and libconfuse), but don't has
-	dependencies to the <a href="www.gnome.org/">GNOME-Libraries</a> or
+	dependencies to the <a href="http://www.gnome.org/">GNOME-Libraries</a> or
 	something similar.
 </p>
 
@@ -99,17 +105,13 @@
 	Everybody wants to see screenshots before he installs a software,
 	so here're some (click on an image to enlarge):
 </p>
-<p>
-	<div class="imgbox">
-		<a href="screenshot1_full.png">
-			<img src="screenshot1_thumb.png" alt="Screenshot" />
-		</a>
-		<p>
-			<a href="http://conky.sourceforge.net/">conky</a>,
-			<a href="http://software.schmorp.de/pkg/rxvt-unicode.html">
-			urxvt</a>, and, at the bottom, an instance of pancake :o)
-		</p>
-	</div>
+<p class="imgbox">
+	<a href="screenshot1_full.png">
+		<img src="screenshot1_thumb.png" alt="Screenshot" />
+	</a><br />
+	<a href="http://conky.sourceforge.net/">conky</a>,
+	<a href="http://software.schmorp.de/pkg/rxvt-unicode.html">
+	urxvt</a>, and, at the bottom, an instance of pancake :o)
 </p>
 <p>
 	OK, this was only one, but if you like pancake and would send me a
@@ -125,10 +127,11 @@
 	To get help with the configuration-file, just run 'pancake -d' or have
 	a look in the pancakerc-file shipped with the program.
 </p>
+<p>
 	If you want to write new modules, I have to acknowledge there isn't much
 	documentation for this kind of stuff around yet.
 	But here's what we have: The sourcecode contains comments to create
-	<a href="www.doxygen.org">doxygen-documentation</a> and in the
+	<a href="http://www.doxygen.org/">doxygen-documentation</a> and in the
 	source-tarball some modules are included.
 	The clock- and defaulttheme-modules should be some fine examples how a
 	module works. And if you've got any questions, don't be shy to write me a
@@ -137,7 +140,6 @@
 <p>
 	And watch out -- we're at version 0.1 at the moment, and the the
 	module-API is far away from being treated as stable.
-<p>
 </p>
 
 <h2><a name="files">Files</a></h2><hr />
@@ -154,12 +156,30 @@
 	Anonymous access to the git-repository will be added soon.
 </p>
 
-<h2><a name="files">Contact</a></h2><hr />
+<h2><a name="changelog">Changelog</a></h2><hr />
+<ul>
+	<li>Mon Jun 15: <b>Initial release of pancake</b> (Version 0.1)</li>
+</ul>
+
+<h2><a name="contact">Contact</a></h2><hr />
 <p>
 	For suggestions, praise, critics, or anything else you can contact me per
 	mail at <a href="mailto:simon.schoenfeld@web.de">simon.schoenfeld@web.de</a>
 	or <a href="http://www.failedprojects.de/projects/pancake/issues">
 	write a ticket</a>.
+</p>
+
+<p>
+	<a href="http://validator.w3.org/check?uri=referer">
+	<img src="http://www.w3.org/Icons/valid-xhtml10-blue"
+		alt="Valid XHTML 1.0 Strict" height="31" width="88" /></a>
+	<a href="http://jigsaw.w3.org/css-validator/check/referer">
+    <img style="border:0;width:88px;height:31px"
+        src="http://jigsaw.w3.org/css-validator/images/vcss-blue"
+        alt="CSS is valid!" />
+	</a>
+	<a href="http://www.gnu.org/copyleft/gpl.html">
+	<img src="gplv3-88x31.png" alt="GNU GPL v3" height="31" width="88" /></a>
 </p>
 
 </div>
