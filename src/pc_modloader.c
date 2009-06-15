@@ -310,7 +310,7 @@ void pc_modloader_print_modulehelp()
 "width = 0.98\n"
 "\n"
 "# the panels align on the screen -- may be set to 'top', 'bottom',\n"
-"# 'top_left', 'top_right', 'bottom_left' or 'bottom_right'\n"
+"# 'top-left', 'top-right', 'bottom-left' or 'bottom-right'\n"
 "align = bottom\n"
 "\n"
 "# may be set to 'true' or 'false' to enable/disable strut.\n"

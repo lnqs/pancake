@@ -24,7 +24,7 @@ height = 24
 width = 0.98
 
 # the panels align on the screen -- may be set to 'top', 'bottom',
-# 'top_left', 'top_right', 'bottom_left' or 'bottom_right'
+# 'top-left', 'top-right', 'bottom-left' or 'bottom-right'
 align = bottom
 
 # may be set to 'true' or 'false' to enable/disable strut.
@@ -61,7 +61,7 @@ defaulttheme mytheme
     rounded_bottom = false
 
 	# The font to use
-    font = Sans 10
+    font = "Sans 10"
 
     # The foreground-color to use, as red-, green- and blue-values in range
     # 0.0 to 1.0.
