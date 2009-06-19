@@ -20,6 +20,25 @@
 #define WNCK_I_KNOW_THIS_IS_UNSTABLE
 #include <libwnck/libwnck.h>
 
+gboolean pc_pager_scroll_event(
+		GtkWidget* widget, GdkEventScroll* event, gpointer data)
+{
+	if(event->direction == GDK_SCROLL_UP)
+	{
+		wnck_workspace_activate(wnck_screen_get_workspace_neighbor(
+				wnck_screen_get_default(), wnck_screen_get_active_workspace(
+				wnck_screen_get_default()), WNCK_MOTION_LEFT), event->time);
+	}
+	else if(event->direction == GDK_SCROLL_DOWN)
+	{
+		wnck_workspace_activate(wnck_screen_get_workspace_neighbor(
+				wnck_screen_get_default(), wnck_screen_get_active_workspace(
+				wnck_screen_get_default()), WNCK_MOTION_RIGHT), event->time);
+	}
+	
+	return FALSE;
+}
+
 static int pc_pager_parse_mode(
 		Config* cfg, ConfigOption* opt, const char* value, void* result)
 {
@@ -44,6 +63,10 @@ static GtkWidget* pc_pager_instantiate(Config* config)
 	wnck_pager_set_show_all(
 			WNCK_PAGER(pager), cfg_getbool(config, "all_workspaces"));
 	wnck_pager_set_n_rows(WNCK_PAGER(pager), cfg_getint(config, "rows"));
+
+	g_signal_connect(G_OBJECT(pager), "scroll-event",
+			G_CALLBACK(&pc_pager_scroll_event), NULL);
+
 	return pager;
 }
 
