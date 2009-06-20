@@ -161,20 +161,22 @@ static ConfigOption* pc_configparser_build_optlist()
 			PC_PANEL_DEFAULT_STRUT_ENABLED, CFGF_NONE);
 
 	const GList* cur = pc_modloader_get_widgets();
-	do
+	while(cur)
 	{
 		PcWidgetInfo* info = cur->data;
 		opts[i++] = (ConfigOption)CFG_SEC((gchar*)info->name,
 				info->options, CFGF_MULTI | CFGF_TITLE);
-	} while((cur = g_list_next(cur)));
+		cur = g_list_next(cur);
+	}
 
 	cur = pc_modloader_get_themes();
-	do
+	while(cur)
 	{
 		PcWidgetInfo* info = cur->data;
 		opts[i++] = (ConfigOption)CFG_SEC((gchar*)info->name,
 				info->options, CFGF_MULTI | CFGF_TITLE);
-	} while((cur = g_list_next(cur)));
+		cur = g_list_next(cur);
+	}
 
 	opts[i++] = (ConfigOption)CFG_END();
 
@@ -192,7 +194,7 @@ static gboolean pc_modloader_load_theme(Config* config)
 
 	/* find the section for our active theme */
 	const GList* cur = pc_modloader_get_themes();
-	do
+	while(cur)
 	{
 		info = cur->data;
 		for(gint i = 0; i < cfg_size(config, info->name); i++)
@@ -203,7 +205,8 @@ static gboolean pc_modloader_load_theme(Config* config)
 				goto found;
 		}
 
-	} while((cur = g_list_next(cur)));
+		cur = g_list_next(cur);
+	}
 
 found:
 	if(!section || g_strcmp0(cfg_title(section), theme))
@@ -243,7 +246,7 @@ static gboolean pc_modloader_load_widgets(Config* config, PcPanel* panel)
 
 		/* find the section for our current widget */
 		const GList* cur = pc_modloader_get_widgets();
-		do
+		while(cur)
 		{
 			info = cur->data;
 			for(gint j = 0; j < cfg_size(config, info->name); j++)
@@ -254,7 +257,8 @@ static gboolean pc_modloader_load_widgets(Config* config, PcPanel* panel)
 					goto found;
 			}
 
-		} while((cur = g_list_next(cur)));
+			cur = g_list_next(cur);
+		}
 
 found:
 		if(!section || g_strcmp0(cfg_title(section), widget))
