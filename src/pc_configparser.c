@@ -183,7 +183,7 @@ static ConfigOption* pc_configparser_build_optlist()
 	return opts;
 }
 
-static gboolean pc_modloader_load_theme(Config* config)
+static gboolean pc_configparser_load_theme(Config* config)
 {
 	const gchar* theme = cfg_getstr(config, "theme");
 	if(!theme)
@@ -228,7 +228,7 @@ found:
 	return TRUE;
 }
 
-static gboolean pc_modloader_load_widgets(Config* config, PcPanel* panel)
+static gboolean pc_configparser_load_widgets(Config* config, PcPanel* panel)
 {
 	for(int i = 0; i < cfg_size(config, "widgets"); i++)
 	{
@@ -311,10 +311,10 @@ gboolean pc_configparser_parse(
 	else if(ret == CFG_PARSE_ERROR)
 		goto error_opts;
 
-	if(!pc_modloader_load_theme(cfg))
+	if(!pc_configparser_load_theme(cfg))
 		goto error_config;
 
-	if(!pc_modloader_load_widgets(cfg, panel))
+	if(!pc_configparser_load_widgets(cfg, panel))
 		goto error_config;
 
 	pc_panel_set_width(panel, cfg_getfloat(cfg, "width"));
