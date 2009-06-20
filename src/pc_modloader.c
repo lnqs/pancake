@@ -130,23 +130,13 @@ error:
 
 void pc_modloader_cleanup()
 {
-	GList* cur = themes;
-	while(cur)
-	{
-		GList* next = g_list_next(cur);
-		g_list_remove(plugins, cur);
-		cur = next;
-	}
+	g_list_free(themes);
+	themes = NULL;
 
-	GList* cur = widgets;
-	while(cur)
-	{
-		GList* next = g_list_next(cur);
-		g_list_remove(widgets, cur);
-		cur = next;
-	}
-	
-	cur = plugins;
+	g_list_free(widgets);
+	widgets = NULL;
+
+	GList* cur = plugins;
 	while(cur)
 	{
 		GModule* gmod = cur->data;
