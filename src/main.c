@@ -17,6 +17,10 @@
 
 #include <locale.h>
 #include <gtk/gtk.h>
+
+#define WNCK_I_KNOW_THIS_IS_UNSTABLE
+#include <libwnck/libwnck.h>
+
 #include <pc_misc.h>
 #include "pc_sighandler.h"
 #include "pc_commandline.h"
@@ -142,6 +146,9 @@ int main(int argc, char** argv)
 	else
 	{
 		g_log_set_default_handler(&pc_log_handler_dialog, NULL);
+
+		wnck_set_client_type(WNCK_CLIENT_TYPE_PAGER);
+
 		GtkWidget* panel = pc_panel_new();
 
 		gtk_style = GTK_STYLE(g_object_ref(

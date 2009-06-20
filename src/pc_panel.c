@@ -32,9 +32,6 @@
 #error "Only the X11-backend of GDK is supported currently"
 #endif
 
-#define WNCK_I_KNOW_THIS_IS_UNSTABLE
-#include <libwnck/libwnck.h>
-
 G_DEFINE_TYPE(PcPanel, pc_panel, GTK_TYPE_WINDOW);
 
 enum
@@ -332,7 +329,6 @@ static void pc_panel_init(PcPanel* panel)
 	gtk_window_set_deletable(GTK_WINDOW(panel), FALSE);
 	gtk_window_set_skip_taskbar_hint(GTK_WINDOW(panel), TRUE);
 	gtk_window_set_skip_pager_hint(GTK_WINDOW(panel), TRUE);
-	wnck_set_client_type(WNCK_CLIENT_TYPE_PAGER);
 
 	GdkScreen* screen = gtk_widget_get_screen(GTK_WIDGET(panel));
 	GdkColormap* colormap = gdk_screen_get_rgba_colormap(screen);
