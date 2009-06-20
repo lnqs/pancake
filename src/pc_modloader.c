@@ -130,7 +130,23 @@ error:
 
 void pc_modloader_cleanup()
 {
-	GList* cur = plugins;
+	GList* cur = themes;
+	while(cur)
+	{
+		GList* next = g_list_next(cur);
+		g_list_remove(plugins, cur);
+		cur = next;
+	}
+
+	GList* cur = widgets;
+	while(cur)
+	{
+		GList* next = g_list_next(cur);
+		g_list_remove(widgets, cur);
+		cur = next;
+	}
+	
+	cur = plugins;
 	while(cur)
 	{
 		GModule* gmod = cur->data;
@@ -145,7 +161,7 @@ void pc_modloader_cleanup()
 		g_module_close(gmod);
 
 		GList* next = g_list_next(cur);
-		plugins = g_list_delete_link(plugins, cur);
+		plugins = g_list_remove(plugins, cur);
 		cur = next;
 	}
 }
