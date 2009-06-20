@@ -168,7 +168,9 @@ int main(int argc, char** argv)
 	}
 	
 	pc_modloader_cleanup();
-	g_object_ref(G_OBJECT(gtk_style));
+
+	if(gtk_style)
+		g_object_unref(G_OBJECT(gtk_style));
 
 	return 0;
 }
