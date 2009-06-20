@@ -39,7 +39,9 @@ typedef struct PcDefaultthemeStyle
 	PcStyle parent_instance;
 	gboolean rounded_top;
 	gboolean rounded_bottom;
+	PcColor linecolor;
 	gfloat bg_alpha;
+	gfloat boxborder;
 } PcDefaultthemeStyle;
 
 typedef struct PcDefaultthemeStyleClass
@@ -114,13 +116,13 @@ static void pc_defaulttheme_draw_box(GtkStyle* style, GdkWindow* window,
 	cairo_t* cr = gdk_cairo_create(window);
 	cairo_set_operator(cr, CAIRO_OPERATOR_SOURCE);
 
-	cairo_set_source_rgba(cr,
-			(1.0f - (gfloat)style->bg[state_type].red)   / 65535.0f,
-			(1.0f - (gfloat)style->bg[state_type].green) / 65535.0f,
-			(1.0f - (gfloat)style->bg[state_type].blue) / 65535.0f,
-			1.0f);
+	cairo_set_line_width(cr, self->boxborder);
+	cairo_set_source_rgba(cr, self->linecolor.r,
+			self->linecolor.g, self->linecolor.b, 1.0f);
 
-	cairo_rectangle(cr, x + 1, y + 1, width - 2, height - 2);
+	cairo_rectangle(cr, x + self->boxborder / 2,
+			y + self->boxborder / 2, width - self->boxborder,
+			height - self->boxborder);
 	cairo_stroke_preserve(cr);
 
 	cairo_set_source_rgba(cr,
@@ -138,15 +140,14 @@ static void pc_defaulttheme_draw_hline(GtkStyle* style, GdkWindow* window,
 		GtkStateType state_type, GdkRectangle* area, GtkWidget* widget,
 		const gchar* detail, gint x1, gint x2, gint y)
 {
+	PcDefaultthemeStyle* self = PC_DEFAULTTHEME_STYLE(style);
+
 	cairo_t* cr = gdk_cairo_create(window);
 	cairo_set_operator(cr, CAIRO_OPERATOR_SOURCE);
 
 	cairo_set_line_width(cr, 0.5f);
-	cairo_set_source_rgba(cr,
-			(1.0f - (gfloat)style->bg[state_type].red)   / 65535.0f,
-			(1.0f - (gfloat)style->bg[state_type].green) / 65535.0f,
-			(1.0f - (gfloat)style->bg[state_type].blue) / 65535.0f,
-			1.0f);
+	cairo_set_source_rgba(cr, self->linecolor.r,
+			self->linecolor.g, self->linecolor.b, 1.0f);
 
 	cairo_move_to(cr, x1, y);
 	cairo_line_to(cr, x2, y);
@@ -159,15 +160,14 @@ static void pc_defaulttheme_draw_vline(GtkStyle* style, GdkWindow* window,
 		GtkStateType state_type, GdkRectangle* area, GtkWidget* widget,
 		const gchar* detail, gint y1, gint y2, gint x)
 {
+	PcDefaultthemeStyle* self = PC_DEFAULTTHEME_STYLE(style);
+
 	cairo_t* cr = gdk_cairo_create(window);
 	cairo_set_operator(cr, CAIRO_OPERATOR_SOURCE);
 
 	cairo_set_line_width(cr, 0.5f);
-	cairo_set_source_rgba(cr,
-			(1.0f - (gfloat)style->bg[state_type].red)   / 65535.0f,
-			(1.0f - (gfloat)style->bg[state_type].green) / 65535.0f,
-			(1.0f - (gfloat)style->bg[state_type].blue) / 65535.0f,
-			1.0f);
+	cairo_set_source_rgba(cr, self->linecolor.r,
+			self->linecolor.g, self->linecolor.b, 1.0f);
 
 	cairo_move_to(cr, x, y1);
 	cairo_line_to(cr, x, y2);
@@ -316,6 +316,11 @@ static GtkStyle* pc_defaulttheme_instantiate(Config* options)
 	PC_DEFAULTTHEME_STYLE(style)->bg_alpha = cfg_getfloat(
 			options, "bg_alpha");
 
+	PC_DEFAULTTHEME_STYLE(style)->linecolor =
+			pc_defaulttheme_config_to_color(options, "linecolor");
+	PC_DEFAULTTHEME_STYLE(style)->boxborder =
+			cfg_getfloat(options, "boxborder");
+
 	return GTK_STYLE(style);
 }
 
@@ -330,6 +335,8 @@ static ConfigOption pc_defaulttheme_options[] = {
 	CFG_FLOAT_LIST("fg_prelight", "{1.0, 1.0, 1.0}", CFGF_NONE),
 	CFG_FLOAT_LIST("bg_prelight", "{0.2, 0.2, 0.2}", CFGF_NONE),
 	CFG_FLOAT("bg_alpha", 0.75f, CFGF_NONE),
+	CFG_FLOAT("boxborder", 1.0f, CFGF_NONE),
+	CFG_FLOAT_LIST("linecolor", "{0.0, 0.0, 0.0}", CFGF_NONE),
 	CFG_END()
 };
 
@@ -369,6 +376,15 @@ void pc_defaulttheme_print_help()
 "\n"
 "    # alpha-value in range 0.0 to 1.0 for the panel's background\n"
 "    bg_alpha = 0.75\n"
+"\n"
+"    # some widgets, like the taskbars buttons, draw boxes with a border\n"
+"    # around. This option sets the thickness of this border\n"
+"    boxborder = 1.0\n"
+"\n"
+"    # When a widget requests to draw a horizontal or vertical line, this\n"
+"    # color will be used. This also affects the color of boxes around some\n"
+"    # widgets\n"
+"    linecolor = { 0.0, 0.0, 0.0 }\n"
 "}\n"
 "\n"
 	);

@@ -84,6 +84,15 @@ defaulttheme mytheme
 
     # alpha-value in range 0.0 to 1.0 for the panel's background
     bg_alpha = 0.75
+
+    # some widgets, like the taskbars buttons, draw boxes with a border
+    # around. This option sets the thickness of this border
+    boxborder = 1.0
+
+    # When a widget requests to draw a horizontal or vertical line, this
+    # color will be used. This also affects the color of boxes around some
+    # widgets
+    linecolor = { 0.0, 0.0, 0.0 }
 }
 
 # Next, we'll configure widgets. A widget-block has the same semantics as a
