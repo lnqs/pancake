@@ -28,6 +28,8 @@
 static gint sigpipe[2];
 static GIOChannel* io_channel;
 
+extern gboolean restart; /* defined in main.c and only set by us */
+
 static const gint signals_to_catch[] =
 {
 	SIGHUP,
@@ -63,18 +65,22 @@ static gboolean pc_sighandler_final_sighandler(
 	/* Since we always just shutdown, we clear the pipe, but ignore
 	   the data received */
 	while((status = g_io_channel_read_chars(source, (gchar*)&signum,
-			sizeof(gint), &read, &error)) == G_IO_STATUS_NORMAL);
-  
-	if(error != NULL)
+			sizeof(gint), &read, &error)) == G_IO_STATUS_NORMAL)
 	{
-		g_critical("failed to read from signalpipe: %s", error->message);
-		g_error_free(error);
+  		if(error != NULL)
+		{
+			g_critical("failed to read from signalpipe: %s", error->message);
+			g_error_free(error);
+		}
+
+		if(status == G_IO_STATUS_EOF)
+			g_critical("signalpipe closed");
+
+		if(signum == SIGHUP)
+			restart = TRUE;
+
+		gtk_main_quit();
 	}
-
-	if(status == G_IO_STATUS_EOF)
-		g_critical("signalpipe closed");
-
-	gtk_main_quit();
 
 	return FALSE;
 }

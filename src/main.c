@@ -16,6 +16,8 @@
  **/
 
 #include <locale.h>
+#include <string.h>
+#include <unistd.h>
 #include <gtk/gtk.h>
 
 #define WNCK_I_KNOW_THIS_IS_UNSTABLE
@@ -32,6 +34,7 @@
 const gchar* pc_program_invocation_name;
 GtkStyle* pc_theme = NULL;
 GtkStyle* gtk_style = NULL;
+gboolean restart = FALSE; /* this is only set by our sighandler on SIGHUP */
 
 static gboolean pc_log_message_to_ignore(
 		const gchar* log_domain, const gchar* message)
@@ -179,6 +182,14 @@ int main(int argc, char** argv)
 
 	if(gtk_style)
 		g_object_unref(G_OBJECT(gtk_style));
+
+	if(restart)
+	{
+		char* newargv[argc + 1];
+		memcpy(newargv, argv, sizeof(char*) * argc);
+		newargv[argc] = NULL;
+		execvp(newargv[0], newargv);
+	}
 
 	return 0;
 }
